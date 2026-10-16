@@ -141,12 +141,12 @@ function Discover() {
         )}
       </div>
 
-      {deck[0] && (
+      {deck[0] && ((top) => (
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <button onClick={() => decide(deck[0], "pass")} className="display rounded-md border border-ink bg-card py-4 text-xl active:bg-muted">
+          <button onClick={() => decide(top, "pass")} className="display rounded-md border border-ink bg-card py-4 text-xl active:bg-muted">
             Pass ←
           </button>
-          <button onClick={() => decide(deck[0], "call")} className="display rounded-md bg-signal py-4 text-xl text-primary-foreground active:bg-oxblood">
+          <button onClick={() => decide(top, "call")} className="display rounded-md bg-signal py-4 text-xl text-primary-foreground active:bg-oxblood">
             Call it →
           </button>
         </div>

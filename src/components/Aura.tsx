@@ -17,9 +17,9 @@ export function blurFor(listeners: number) {
 
 export function Aura({ mix, listeners }: { mix: Mix; listeners: number }) {
   const blur = blurFor(listeners);
-  const core = C[mix.core] ?? C.ink;
-  const mid = C[mix.mid] ?? C.red;
-  const halo = C[mix.halo] ?? C.teal;
+  const core = C[mix.core] ?? C["ink"];
+  const mid = C[mix.mid] ?? C["red"];
+  const halo = C[mix.halo] ?? C["teal"];
   const shape =
     mix.shape === "capsule"
       ? { width: "46%", height: "78%", borderRadius: "999px" }
@@ -39,8 +39,8 @@ export function Aura({ mix, listeners }: { mix: Mix; listeners: number }) {
   return (
     <div className="absolute inset-0 overflow-hidden bg-card">
       {/* chromatic fringe */}
-      <div style={{ ...base, background: C.red, opacity: 0.35, marginLeft: -6, mixBlendMode: "multiply" }} />
-      <div style={{ ...base, background: C.teal, opacity: 0.35, marginLeft: 6, mixBlendMode: "multiply" }} />
+      <div style={{ ...base, background: C["red"], opacity: 0.35, marginLeft: -6, mixBlendMode: "multiply" }} />
+      <div style={{ ...base, background: C["teal"], opacity: 0.35, marginLeft: 6, mixBlendMode: "multiply" }} />
       <div style={{ ...base, background: grad }} />
       {listeners < 1000 && (
         <div

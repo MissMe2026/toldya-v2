@@ -84,6 +84,7 @@ export type Database = {
         Row: {
           artist_id: string
           called_at: string
+          callers_at_call: number
           id: string
           is_big_call: boolean
           listeners_at_call: number
@@ -92,6 +93,7 @@ export type Database = {
         Insert: {
           artist_id: string
           called_at?: string
+          callers_at_call?: number
           id?: string
           is_big_call?: boolean
           listeners_at_call: number
@@ -100,6 +102,7 @@ export type Database = {
         Update: {
           artist_id?: string
           called_at?: string
+          callers_at_call?: number
           id?: string
           is_big_call?: boolean
           listeners_at_call?: number

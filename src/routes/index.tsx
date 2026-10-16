@@ -139,7 +139,8 @@ function Discover() {
 
       <div className="relative mt-4 h-[540px]">
         {isLoading && <div className="meta absolute inset-0 grid place-items-center text-muted-foreground">Tuning in…</div>}
-        {!isLoading && deck.length === 0 && (
+        {error && <div role="alert" className="meta absolute inset-0 grid place-items-center text-signal">Couldn't load artists. Refresh to retry.</div>}
+        {!isLoading && !error && deck.length === 0 && (
           <div className="absolute inset-0 flex flex-col justify-between rounded-md bg-signal p-5 text-primary-foreground">
             <p className="caps-block text-xs">Deck empty. Change the filters or come back tomorrow — new artists drop daily.</p>
             <div className="display text-7xl">THAT'S ALL.</div>
@@ -185,7 +186,7 @@ function SwipeCard({ artist: a, top, depth, onDecide }: { artist: Artist; top: b
     if (Math.abs(dx) > 110) {
       const dir = dx > 0 ? 1 : -1;
       setLeaving(dir);
-      setTimeout(() => onDecide(dir > 0 ? "call" : "pass"), 220);
+      setTimeout(() => { onDecide(dir > 0 ? "call" : "pass"); setLeaving(0); setDx(0); }, 220);
     } else setDx(0);
   };
 

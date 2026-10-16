@@ -1,9 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useRef, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Aura } from "@/components/Aura";
 import { PageShell } from "@/components/TabBar";
+import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
+import { fmt, hype, listenersAt, niceDate, stampDate as stamp, type Artist as BaseArtist } from "@/lib/toldya";
+import { tasteProfile } from "@/lib/providers";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,11 +21,7 @@ export const Route = createFileRoute("/")({
   component: Discover,
 });
 
-type Artist = {
-  id: string; name: string; genre: string; city: string; bio: string;
-  aura_mix: { core: string; mid: string; halo: string; shape: string; angle: number };
-  monthly_listeners: number; growth_rate: number; callers_count: number;
-};
+type Artist = BaseArtist & { because?: string };
 
 const GENRES = ["all", "pop", "hip-hop", "r&b", "indie", "electronic", "alt-rock", "latin", "country"];
 const TIERS = [
@@ -30,10 +30,6 @@ const TIERS = [
   { k: "10k", label: "Under 10K", max: 10000 },
   { k: "100k", label: "Under 100K", max: 100000 },
 ];
-
-const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}K` : String(n));
-const stamp = (d: Date) =>
-  `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()} · ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 
 function spark(a: Artist) {
   let seed = a.name.length * 97 + a.monthly_listeners;
@@ -48,42 +44,63 @@ function spark(a: Artist) {
   return pts.map((p, i) => `${(i / 29) * 100},${28 - ((p - min) / (max - min || 1)) * 26}`).join(" ");
 }
 
-function hype(a: Artist) {
-  return Math.max(4, Math.min(99, Math.round(((Number(a.growth_rate) + 5) / 65) * 100)));
-}
-
 function Discover() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["artists"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("artists").select("*").order("created_at");
-      if (error) throw error;
-      return data as unknown as Artist[];
-    },
-  });
+  const { user } = useAuth();
+  const { data, isLoading, error } = useArtists();
+  const { data: profile } = useProfile();
+  const { data: myCalls = [] } = useMyCalls();
+  const qc = useQueryClient();
+  const navigate = useNavigate();
   const [genre, setGenre] = useState("all");
   const [tier, setTier] = useState("any");
   const [done, setDone] = useState<Record<string, "call" | "pass">>({});
   const [called, setCalled] = useState<{ a: Artist; at: Date } | null>(null);
 
+  useEffect(() => {
+    if (profile && !profile.onboarded) navigate({ to: "/onboarding" });
+  }, [profile, navigate]);
+
+  const months = profile?.sim_months ?? 0;
+  const liked = useMemo(() => {
+    const t = tasteProfile(profile?.connected ?? {});
+    return Array.from(new Set([...t.topGenres, ...(profile?.genres ?? [])]));
+  }, [profile]);
+
   const deck = useMemo(() => {
     const max = TIERS.find((t) => t.k === tier)!.max;
-    return (data ?? []).filter(
-      (a) => !done[a.id] && (genre === "all" || a.genre === genre) && a.monthly_listeners < max,
-    );
-  }, [data, genre, tier, done]);
+    const calledIds = new Set(myCalls.map((c) => c.artist_id));
+    const list: Artist[] = (data ?? [])
+      .map((a) => ({ ...a, monthly_listeners: listenersAt(a, months), because: liked.includes(a.genre) ? a.genre : undefined }))
+      .filter((a) => !done[a.id] && !calledIds.has(a.id) && (genre === "all" || a.genre === genre) && a.monthly_listeners < max);
+    return list.sort((a, b) => Number(!!b.because) - Number(!!a.because));
+  }, [data, genre, tier, done, myCalls, months, liked]);
 
-  const decide = (a: Artist, d: "call" | "pass") => {
-    if (d === "call") {
-      navigator.vibrate?.(30);
-      setCalled({ a, at: new Date() });
-      setTimeout(() => setCalled(null), 1400);
+  const decide = async (a: Artist, d: "call" | "pass") => {
+    if (d === "pass") return setDone((s) => ({ ...s, [a.id]: d }));
+    if (!user) {
+      toast("Sign in to lock in your call.", { action: { label: "Sign in", onClick: () => navigate({ to: "/auth" }) } });
+      return;
     }
     setDone((s) => ({ ...s, [a.id]: d }));
+    const at = new Date();
+    const { error } = await supabase.from("calls").insert({
+      user_id: user.id, artist_id: a.id, listeners_at_call: a.monthly_listeners, callers_at_call: a.callers_count,
+    });
+    if (error) {
+      setDone((s) => { const n = { ...s }; delete n[a.id]; return n; });
+      toast.error(error.code === "23505" ? "You already called this one." : "Couldn't save your call. Try again.");
+      return;
+    }
+    navigator.vibrate?.(30);
+    setCalled({ a, at });
+    setTimeout(() => setCalled(null), 1400);
+    toast.success(`Called it. ${a.name} at ${fmt(a.monthly_listeners)} listeners on ${niceDate(at)}.`);
+    qc.invalidateQueries({ queryKey: ["calls"] });
+    qc.invalidateQueries({ queryKey: ["artists"] });
   };
 
   const topCard = deck[0];
-  const calls = Object.values(done).filter((d) => d === "call").length;
+  const calls = myCalls.length;
 
   return (
     <PageShell>

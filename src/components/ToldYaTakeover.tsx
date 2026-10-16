@@ -22,7 +22,7 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
   }, [r.mult]);
 
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-label="Told ya" className="fixed inset-0 z-50 flex flex-col bg-signal text-primary-foreground">
+    <div role="dialog" aria-modal="true" aria-label="Told ya" className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-signal text-primary-foreground">
       <div className="animate-flash absolute inset-0 bg-card" />
       <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-6 pt-6">
         <div className="flex justify-between meta"><span>ToldYa® · Badge earned</span><span>No. 01</span></div>

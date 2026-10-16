@@ -53,6 +53,104 @@ export type Database = {
         }
         Relationships: []
       }
+      board_users: {
+        Row: {
+          calls: number
+          handle: string
+          hits: number
+          id: string
+          score_all: number
+          score_week: number
+        }
+        Insert: {
+          calls: number
+          handle: string
+          hits: number
+          id?: string
+          score_all: number
+          score_week: number
+        }
+        Update: {
+          calls?: number
+          handle?: string
+          hits?: number
+          id?: string
+          score_all?: number
+          score_week?: number
+        }
+        Relationships: []
+      }
+      calls: {
+        Row: {
+          artist_id: string
+          called_at: string
+          callers_at_call: number
+          id: string
+          is_big_call: boolean
+          listeners_at_call: number
+          user_id: string
+        }
+        Insert: {
+          artist_id: string
+          called_at?: string
+          callers_at_call?: number
+          id?: string
+          is_big_call?: boolean
+          listeners_at_call: number
+          user_id: string
+        }
+        Update: {
+          artist_id?: string
+          called_at?: string
+          callers_at_call?: number
+          id?: string
+          is_big_call?: boolean
+          listeners_at_call?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          connected: Json
+          created_at: string
+          genres: string[]
+          handle: string
+          id: string
+          onboarded: boolean
+          sim_months: number
+          top8: Json
+        }
+        Insert: {
+          connected?: Json
+          created_at?: string
+          genres?: string[]
+          handle: string
+          id: string
+          onboarded?: boolean
+          sim_months?: number
+          top8?: Json
+        }
+        Update: {
+          connected?: Json
+          created_at?: string
+          genres?: string[]
+          handle?: string
+          id?: string
+          onboarded?: boolean
+          sim_months?: number
+          top8?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

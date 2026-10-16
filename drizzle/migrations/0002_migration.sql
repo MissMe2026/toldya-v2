@@ -1,0 +1,1 @@
+ALTER TABLE public.calls ADD COLUMN callers_at_call integer NOT NULL DEFAULT 0;

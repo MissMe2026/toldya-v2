@@ -10,13 +10,28 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CallsRouteImport } from './routes/calls'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RCallIdRouteImport } from './routes/r.$callId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CallsRoute = CallsRouteImport.update({
@@ -24,9 +39,19 @@ const CallsRoute = CallsRouteImport.update({
   path: '/calls',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -34,39 +59,92 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RCallIdRoute = RCallIdRouteImport.update({
+  id: '/r/$callId',
+  path: '/r/$callId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/connect': typeof ConnectRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
+  '/r/$callId': typeof RCallIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/connect': typeof ConnectRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
+  '/r/$callId': typeof RCallIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
+  '/connect': typeof ConnectRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
+  '/r/$callId': typeof RCallIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calls' | '/leaderboard' | '/profile'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/calls'
+    | '/connect'
+    | '/leaderboard'
+    | '/onboarding'
+    | '/profile'
+    | '/r/$callId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calls' | '/leaderboard' | '/profile'
-  id: '__root__' | '/' | '/calls' | '/leaderboard' | '/profile'
+  to:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/calls'
+    | '/connect'
+    | '/leaderboard'
+    | '/onboarding'
+    | '/profile'
+    | '/r/$callId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/calls'
+    | '/connect'
+    | '/leaderboard'
+    | '/onboarding'
+    | '/profile'
+    | '/r/$callId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   CallsRoute: typeof CallsRoute
+  ConnectRoute: typeof ConnectRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
+  RCallIdRoute: typeof RCallIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,11 +156,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calls': {
       id: '/calls'
       path: '/calls'
       fullPath: '/calls'
       preLoaderRoute: typeof CallsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -92,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -99,14 +205,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/r/$callId': {
+      id: '/r/$callId'
+      path: '/r/$callId'
+      fullPath: '/r/$callId'
+      preLoaderRoute: typeof RCallIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   CallsRoute: CallsRoute,
+  ConnectRoute: ConnectRoute,
   LeaderboardRoute: LeaderboardRoute,
+  OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
+  RCallIdRoute: RCallIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

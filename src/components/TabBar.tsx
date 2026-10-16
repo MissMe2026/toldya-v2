@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 const tabs = [
   { to: "/", label: "Discover", n: "(1)" },
@@ -7,16 +8,20 @@ const tabs = [
   { to: "/profile", label: "Profile", n: "(4)" },
 ] as const;
 
+const HIDDEN = ["/auth", "/onboarding"];
+
 export function TabBar() {
+  const { pathname } = useLocation();
+  if (HIDDEN.includes(pathname) || pathname.startsWith("/r/")) return null;
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-card">
+    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t bg-card">
       <div className="mx-auto grid max-w-md grid-cols-4">
         {tabs.map((t) => (
           <Link
             key={t.to}
             to={t.to}
             activeOptions={{ exact: true }}
-            className="flex flex-col items-start gap-0.5 px-3 py-3 text-foreground"
+            className="flex flex-col items-start gap-0.5 px-3 py-3 text-foreground focus-visible:outline-2 focus-visible:outline-signal"
             activeProps={{ className: "bg-ink text-primary-foreground" }}
           >
             <span className="meta opacity-70">{t.n}</span>
@@ -28,6 +33,24 @@ export function TabBar() {
   );
 }
 
-export function PageShell({ children }: { children: React.ReactNode }) {
+export function PageShell({ children }: { children: ReactNode }) {
   return <div className="mx-auto min-h-screen max-w-md px-4 pb-28 pt-5">{children}</div>;
+}
+
+export function TopBar({ n, right }: { n: string; right?: ReactNode }) {
+  return (
+    <div className="flex items-center justify-between">
+      <Link to="/" className="display text-xl">ToldYa®</Link>
+      <span className="meta text-muted-foreground">{right ?? n}</span>
+    </div>
+  );
+}
+
+export function SignInCta({ what }: { what: string }) {
+  return (
+    <div className="mt-10 rounded-md bg-signal p-5 text-primary-foreground">
+      <p className="caps-block text-xs">Sign in to {what}. Judges: one tap on "Try the demo" gets you a loaded account.</p>
+      <Link to="/auth" className="display mt-10 inline-block rounded-md bg-card px-5 py-3 text-xl text-signal">Sign in →</Link>
+    </div>
+  );
 }

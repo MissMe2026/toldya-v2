@@ -42,9 +42,9 @@ function Calls() {
 
   const bigCount = calls.filter((c) => c.is_big_call).length;
   const toggleBig = async (id: string, on: boolean) => {
-    if (!on && bigCount >= 3) return toast("Only 3 Big Calls. Unstar one first.");
+    if (!on && bigCount >= 3) { toast("Only 3 Big Calls. Unstar one first."); return; }
     const { error } = await supabase.from("calls").update({ is_big_call: !on }).eq("id", id);
-    if (error) return toast.error("Couldn't update. Try again.");
+    if (error) { toast.error("Couldn't update. Try again."); return; }
     qc.invalidateQueries({ queryKey: ["calls"] });
   };
 

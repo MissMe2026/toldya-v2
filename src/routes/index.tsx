@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
   component: Discover,
 });
 
-type Artist = BaseArtist & { because?: string };
+type Artist = BaseArtist & { because?: string | undefined };
 
 const GENRES = ["all", "pop", "hip-hop", "r&b", "indie", "electronic", "alt-rock", "latin", "country"];
 const TIERS = [

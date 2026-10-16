@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      artists: {
+        Row: {
+          aura_mix: Json
+          bio: string
+          callers_count: number
+          city: string
+          created_at: string
+          genre: string
+          growth_rate: number
+          id: string
+          monthly_listeners: number
+          name: string
+        }
+        Insert: {
+          aura_mix: Json
+          bio: string
+          callers_count?: number
+          city: string
+          created_at?: string
+          genre: string
+          growth_rate: number
+          id?: string
+          monthly_listeners: number
+          name: string
+        }
+        Update: {
+          aura_mix?: Json
+          bio?: string
+          callers_count?: number
+          city?: string
+          created_at?: string
+          genre?: string
+          growth_rate?: number
+          id?: string
+          monthly_listeners?: number
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

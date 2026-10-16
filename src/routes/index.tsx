@@ -82,6 +82,7 @@ function Discover() {
     setDone((s) => ({ ...s, [a.id]: d }));
   };
 
+  const topCard = deck[0];
   const calls = Object.values(done).filter((d) => d === "call").length;
 
   return (

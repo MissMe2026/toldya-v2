@@ -10,13 +10,20 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CallsRouteImport } from './routes/calls'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ProfileRouteImport } from './routes/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CallsRoute = CallsRouteImport.update({
@@ -29,6 +36,11 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
   path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -37,35 +49,51 @@ const ProfileRoute = ProfileRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/calls': typeof CallsRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calls' | '/leaderboard' | '/profile'
+  fullPaths:
+    '/' | '/auth' | '/calls' | '/leaderboard' | '/onboarding' | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calls' | '/leaderboard' | '/profile'
-  id: '__root__' | '/' | '/calls' | '/leaderboard' | '/profile'
+  to: '/' | '/auth' | '/calls' | '/leaderboard' | '/onboarding' | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/calls'
+    | '/leaderboard'
+    | '/onboarding'
+    | '/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   CallsRoute: typeof CallsRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
 }
 
@@ -76,6 +104,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/calls': {
@@ -92,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -104,8 +146,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   CallsRoute: CallsRoute,
   LeaderboardRoute: LeaderboardRoute,
+  OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport

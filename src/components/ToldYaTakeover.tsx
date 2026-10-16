@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { Aura } from "./Aura";
 import { fmt, fmtMult, type Receipt } from "@/lib/toldya";
@@ -20,7 +21,7 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
     return () => { cancelAnimationFrame(raf); clearTimeout(s); };
   }, [r.mult]);
 
-  return (
+  return createPortal(
     <div role="dialog" aria-modal="true" aria-label="Told ya" className="fixed inset-0 z-50 flex flex-col bg-signal text-primary-foreground">
       <div className="animate-flash absolute inset-0 bg-card" />
       <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-6 pt-6">
@@ -43,6 +44,7 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
           </Link>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

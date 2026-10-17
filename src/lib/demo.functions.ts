@@ -1,37 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
-
-export const DEMO_EMAIL = "demo@toldya.app";
-export const DEMO_PASSWORD = "toldya-demo-2026";
-
-const DEMO_CALLS: { name: string; daysAgo: number; big?: boolean; callers: number }[] = [
-  { name: "Ohmra", daysAgo: 21, big: true, callers: 12 },
-  { name: "Rue Dahlia", daysAgo: 34, big: true, callers: 3 },
-  { name: "Hollis Creek", daysAgo: 9, callers: 40 },
-  { name: "Static Bloom", daysAgo: 48, callers: 260 },
-  { name: "Glass Coyote", daysAgo: 15, callers: 180 },
-  { name: "The Lantern Kids", daysAgo: 4, callers: 110 },
-];
+import { DEMO_CALLS, historicalListeners, newDemoIdentity } from "./demo-seed";
 
 /**
- * Public endpoint: ensures the shared demo account exists and resets it to a
- * known state so every judge gets the same experience. Touches only the demo user.
+ * Public demo entry: creates and seeds only a fresh account for this caller.
+ * Existing users and other judges' demo accounts are never read or reset.
  */
 export const prepareDemo = createServerFn({ method: "POST" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
-  let user = list?.users.find((u) => u.email === DEMO_EMAIL);
-  if (!user) {
-    const { data, error } = await supabaseAdmin.auth.admin.createUser({
-      email: DEMO_EMAIL, password: DEMO_PASSWORD, email_confirm: true, user_metadata: { handle: "demo_judge" },
-    });
-    if (error || !data.user) throw new Error("Could not prepare the demo account");
-    user = data.user;
-  }
+  const identity = newDemoIdentity();
+  const { data: account, error: accountError } = await supabaseAdmin.auth.admin.createUser({
+    email: identity.email, password: identity.password, email_confirm: true, user_metadata: { handle: identity.handle },
+  });
+  if (accountError || !account.user) throw new Error("Could not prepare the demo account");
+  const userId = account.user.id;
   const { importFrom, PROVIDERS } = await import("./providers");
-  const spotify = await importFrom(PROVIDERS[0]!);
-  const apple = await importFrom(PROVIDERS[1]!);
-  await supabaseAdmin.from("profiles").upsert({
-    id: user.id, handle: "demo_judge", sim_months: 0, onboarded: true,
+  const spotifyProvider = PROVIDERS.find((p) => p.id === "spotify");
+  const appleProvider = PROVIDERS.find((p) => p.id === "apple");
+  if (!spotifyProvider || !appleProvider) throw new Error("Demo listening apps unavailable");
+  const [spotify, apple] = await Promise.all([importFrom(spotifyProvider), importFrom(appleProvider)]);
+  const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
+    id: userId, handle: identity.handle, sim_months: 0, onboarded: true,
     genres: ["electronic", "indie", "alt-rock"],
     connected: { spotify, apple } as never,
     top8: [
@@ -39,16 +27,20 @@ export const prepareDemo = createServerFn({ method: "POST" }).handler(async () =
       { name: "Paper Moths" }, { name: "Deltawave" }, { name: "Juno Vex" }, { name: "Mira Bloom" },
     ] as never,
   });
-  const { data: artists } = await supabaseAdmin.from("artists").select("id,name,monthly_listeners");
-  await supabaseAdmin.from("calls").delete().eq("user_id", user.id);
+  if (profileError) throw new Error("Could not prepare demo profile");
+  const { data: artists, error: artistError } = await supabaseAdmin.from("artists").select("id,name,monthly_listeners,growth_rate");
+  if (artistError || !artists) throw new Error("Could not load demo artists");
+  const now = Date.now();
   const rows = DEMO_CALLS.flatMap((c) => {
     const a = artists?.find((x) => x.name === c.name);
     if (!a) return [];
     return [{
-      user_id: user!.id, artist_id: a.id, listeners_at_call: a.monthly_listeners,
-      called_at: new Date(Date.now() - c.daysAgo * 86400000).toISOString(), is_big_call: !!c.big, callers_at_call: c.callers,
+      user_id: userId, artist_id: a.id, listeners_at_call: historicalListeners(a.monthly_listeners, Number(a.growth_rate), c.daysAgo),
+      called_at: new Date(now - c.daysAgo * 86400000).toISOString(), is_big_call: c.big, callers_at_call: c.callers,
     }];
   });
-  await supabaseAdmin.from("calls").insert(rows);
-  return { email: DEMO_EMAIL, password: DEMO_PASSWORD };
+  if (rows.length !== 6) throw new Error("Demo artists are incomplete");
+  const { error: callsError } = await supabaseAdmin.from("calls").insert(rows);
+  if (callsError) throw new Error("Could not prepare demo receipts");
+  return { email: identity.email, password: identity.password };
 });

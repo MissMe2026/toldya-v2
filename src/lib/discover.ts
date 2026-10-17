@@ -1,6 +1,6 @@
 import { listenersAt, type Artist } from "./toldya";
 
-export type DiscoverArtist = Artist & { because?: string };
+export type DiscoverArtist = Artist & { because?: string | undefined };
 
 export function discoverDeck(artists: Artist[], options: {
   months: number; liked: string[]; genre: string; max: number; excluded: Set<string>;

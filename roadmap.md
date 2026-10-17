@@ -3,3 +3,5 @@
 - [ ] Share demo login across Auth and Discover; add signed-out strip and call sheet.
 - [ ] Rank by taste then growth and display taste label.
 - [ ] Verify mobile signed-out and demo call flows, metadata, and badge clearance.
+- [ ] Create a fresh demo account per tap with historical listener snapshots and test growth outcomes.
+- [ ] Pin the current user's highlighted leaderboard row above the normal rankings.

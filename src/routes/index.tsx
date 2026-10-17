@@ -16,6 +16,8 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "ToldYa — Discover tomorrow's charts, today" },
       { name: "description", content: "Swipe emerging artists. Call the ones about to blow up. Get timestamped receipts." },
       { property: "og:title", content: "ToldYa — Discover tomorrow's charts, today" },
@@ -172,16 +174,16 @@ function Discover() {
 
       {topCard && (
         <div className="mt-6 grid shrink-0 grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="display h-14 rounded-md border border-ink bg-card text-xl shadow-none active:bg-muted">
+          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="display h-14 rounded-md border border-ink bg-card text-xl font-extrabold shadow-none active:bg-muted">
             Pass ←
           </Button>
-          <Button onClick={() => decide(topCard, "call")} className="display h-14 rounded-md bg-signal text-xl text-primary-foreground shadow-none hover:bg-oxblood active:bg-oxblood">
+          <Button onClick={() => decide(topCard, "call")} className="display h-14 rounded-md bg-signal text-xl font-extrabold text-primary-foreground shadow-none hover:bg-oxblood active:bg-oxblood">
             Call it →
           </Button>
         </div>
       )}
       <Sheet open={callSheet && !user} onOpenChange={setCallSheet}>
-        <SheetContent side="bottom" aria-describedby={undefined} className="bottom-[calc(64px+env(safe-area-inset-bottom)+12px)] inset-x-4 mx-auto max-w-md rounded-md border bg-card p-5 shadow-none">
+        <SheetContent side="bottom" aria-describedby={undefined} className="bottom-[calc(64px_+_env(safe-area-inset-bottom)_+_12px)] inset-x-4 mx-auto max-w-md rounded-md border bg-card p-5 shadow-none">
           <SheetTitle className="display pr-6 text-3xl">Lock in your call.</SheetTitle>
           <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
             <Button onClick={tryDemo} disabled={demoBusy} className="h-11 bg-ink font-display font-extrabold shadow-none">

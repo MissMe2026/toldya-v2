@@ -9,6 +9,8 @@ import { earScore, isToldYa, receipts } from "@/lib/toldya";
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Leaderboard — ToldYa" },
       { name: "description", content: "Who has the best ears? The ToldYa leaderboard." },
       { property: "og:title", content: "Leaderboard — ToldYa" },

@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Sign in — ToldYa" },
       { name: "description", content: "Sign in to ToldYa or try the demo in one tap." },
       { property: "og:title", content: "Sign in — ToldYa" },

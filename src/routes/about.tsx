@@ -4,6 +4,8 @@ import { PageShell, TopBar } from "@/components/TabBar";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "About — ToldYa" },
       { name: "description", content: "Why ToldYa exists, how it works, and what's next." },
       { property: "og:title", content: "About — ToldYa" },

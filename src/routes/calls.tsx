@@ -13,6 +13,8 @@ import { fmt, fmtMult, isToldYa, receipts, stampDate, status } from "@/lib/toldy
 export const Route = createFileRoute("/calls")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "My Calls — ToldYa" },
       { name: "description", content: "Your receipts: every artist you called before the hype." },
       { property: "og:title", content: "My Calls — ToldYa" },

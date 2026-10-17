@@ -14,8 +14,8 @@ export function TabBar() {
   const { pathname } = useLocation();
   if (HIDDEN.includes(pathname) || pathname.startsWith("/r/")) return null;
   return (
-    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t bg-card">
-      <div className="mx-auto grid max-w-md grid-cols-4">
+    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t bg-card pb-[env(safe-area-inset-bottom)]">
+      <div className="mx-auto grid h-16 max-w-md grid-cols-4">
         {tabs.map((t) => (
           <Link
             key={t.to}
@@ -33,8 +33,8 @@ export function TabBar() {
   );
 }
 
-export function PageShell({ children }: { children: ReactNode }) {
-  return <div className="mx-auto min-h-screen max-w-md px-4 pb-28 pt-5">{children}</div>;
+export function PageShell({ children, fitScreen = false }: { children: ReactNode; fitScreen?: boolean }) {
+  return <div className={fitScreen ? "discover-shell mx-auto flex max-w-md flex-col overflow-hidden px-4 pt-5" : "mx-auto min-h-screen max-w-md px-4 pb-28 pt-5"}>{children}</div>;
 }
 
 export function TopBar({ n, right }: { n: string; right?: ReactNode }) {

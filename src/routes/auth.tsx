@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { prepareDemo } from "@/lib/demo.functions";
+import { useTryDemo } from "@/hooks/useTryDemo";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -19,27 +19,13 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const demo = useServerFn(prepareDemo);
+  const { tryDemo, busy: demoBusy } = useTryDemo();
   const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [handle, setHandle] = useState("");
-  const [busy, setBusy] = useState<"" | "form" | "demo">("");
+  const [busy, setBusy] = useState<"" | "form">("");
   const [sent, setSent] = useState(false);
-
-  const tryDemo = async () => {
-    setBusy("demo");
-    try {
-      const creds = await demo();
-      const { error } = await supabase.auth.signInWithPassword(creds);
-      if (error) throw error;
-      navigate({ to: "/", replace: true });
-    } catch {
-      toast.error("The demo didn't load. Try again in a moment.");
-    } finally {
-      setBusy("");
-    }
-  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,13 +61,13 @@ function AuthPage() {
         <h1 className="display mt-8 text-7xl">Called<br />it.</h1>
       </div>
       <div className="flex-1 px-5 py-6">
-        <button
+        <Button
           onClick={tryDemo}
-          disabled={!!busy}
-          className="display w-full rounded-md bg-ink py-5 text-2xl text-primary-foreground disabled:opacity-60"
+          disabled={!!busy || demoBusy}
+          className="display h-auto w-full rounded-md bg-ink py-5 text-2xl text-primary-foreground shadow-none disabled:opacity-60"
         >
-          {busy === "demo" ? "Loading receipts…" : "Try the demo →"}
-        </button>
+          {demoBusy ? "Loading receipts…" : "Try the demo →"}
+        </Button>
         <p className="meta mt-2 text-center text-muted-foreground">One tap · pre-loaded account · for judges</p>
 
         <div className="my-6 flex items-center gap-3 meta text-muted-foreground"><span className="h-px flex-1 bg-border" />or<span className="h-px flex-1 bg-border" /></div>
@@ -107,7 +93,7 @@ function AuthPage() {
               <span className="meta">Password</span>
               <input required minLength={6} type="password" autoComplete={mode === "in" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-signal" />
             </label>
-            <button disabled={!!busy} className="display mt-2 w-full rounded-md bg-signal py-3.5 text-xl text-primary-foreground active:bg-oxblood disabled:opacity-60">
+            <button disabled={!!busy || demoBusy} className="display mt-2 w-full rounded-md bg-signal py-3.5 text-xl text-primary-foreground active:bg-oxblood disabled:opacity-60">
               {busy === "form" ? "…" : mode === "in" ? "Sign in" : "Create account"}
             </button>
             <button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="meta w-full py-2 text-muted-foreground underline">

@@ -13,6 +13,8 @@ import { tasteProfile } from "@/lib/providers";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Profile — ToldYa" },
       { name: "description", content: "Your ToldYa profile: Ear Score, badges, Top 8 and taste profile." },
       { property: "og:title", content: "Profile — ToldYa" },

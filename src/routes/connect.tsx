@@ -9,6 +9,8 @@ import { importFrom, PROVIDERS, type ProviderAdapter } from "@/lib/providers";
 export const Route = createFileRoute("/connect")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Connected Apps — ToldYa" },
       { name: "description", content: "Connect your listening apps to build your ToldYa taste profile." },
       { property: "og:title", content: "Connected Apps — ToldYa" },

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -6,12 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Aura } from "@/components/Aura";
 import { PageShell } from "@/components/TabBar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
-import { fmt, hype, listenersAt, niceDate, stampDate as stamp, type Artist as BaseArtist } from "@/lib/toldya";
+import { fmt, hype, niceDate, stampDate as stamp } from "@/lib/toldya";
 import { tasteProfile } from "@/lib/providers";
+import { discoverDeck, type DiscoverArtist as Artist } from "@/lib/discover";
+import { useTryDemo } from "@/hooks/useTryDemo";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "ToldYa — Discover tomorrow's charts, today" },
       { name: "description", content: "Swipe emerging artists. Call the ones about to blow up. Get timestamped receipts." },
       { property: "og:title", content: "ToldYa — Discover tomorrow's charts, today" },
@@ -20,8 +26,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Discover,
 });
-
-type Artist = BaseArtist & { because?: string | undefined };
 
 const GENRES = ["all", "pop", "hip-hop", "r&b", "indie", "electronic", "alt-rock", "latin", "country"];
 const TIERS = [
@@ -45,7 +49,9 @@ function spark(a: Artist) {
 }
 
 function Discover() {
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
+  const { tryDemo, busy: demoBusy } = useTryDemo();
+  const [callSheet, setCallSheet] = useState(false);
   const { data, isLoading, error } = useArtists();
   const { data: profile } = useProfile();
   const { data: myCalls = [] } = useMyCalls();
@@ -67,18 +73,15 @@ function Discover() {
   }, [profile]);
 
   const deck = useMemo(() => {
-    const max = TIERS.find((t) => t.k === tier)!.max;
-    const calledIds = new Set(myCalls.map((c) => c.artist_id));
-    const list: Artist[] = (data ?? [])
-      .map((a) => ({ ...a, monthly_listeners: listenersAt(a, months), because: liked.includes(a.genre) ? a.genre : undefined }))
-      .filter((a) => !done[a.id] && !calledIds.has(a.id) && (genre === "all" || a.genre === genre) && a.monthly_listeners < max);
-    return list.sort((a, b) => Number(!!b.because) - Number(!!a.because));
+    const max = TIERS.find((t) => t.k === tier)?.max ?? Infinity;
+    const excluded = new Set([...myCalls.map((c) => c.artist_id), ...Object.keys(done)]);
+    return discoverDeck(data ?? [], { months, liked, genre, max, excluded });
   }, [data, genre, tier, done, myCalls, months, liked]);
 
   const decide = async (a: Artist, d: "call" | "pass") => {
     if (d === "pass") return setDone((s) => ({ ...s, [a.id]: d }));
     if (!user) {
-      toast("Sign in to lock in your call.", { action: { label: "Sign in", onClick: () => navigate({ to: "/auth" }) } });
+      setCallSheet(true);
       return;
     }
     setDone((s) => ({ ...s, [a.id]: d }));
@@ -103,41 +106,50 @@ function Discover() {
   const calls = myCalls.length;
 
   return (
-    <PageShell>
-      <header className="flex items-start justify-between">
-        <div>
+    <PageShell fitScreen>
+      <header className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+        <div className="min-w-0">
           <h1 className="display text-5xl text-signal">Before<br />the hype.</h1>
         </div>
-        <div className="text-right">
+        <div className="shrink-0 text-right">
           <div className="display text-lg">ToldYa®</div>
           <div className="meta mt-1 text-muted-foreground">{calls} calls · {deck.length} left</div>
         </div>
       </header>
 
-      <div className="-mx-4 mt-5 flex gap-1.5 overflow-x-auto px-4 pb-1">
+      {ready && !user && (
+        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-sm bg-signal p-2 text-primary-foreground">
+          <span className="meta min-w-0">JUDGES START HERE</span>
+          <Button onClick={tryDemo} disabled={demoBusy} className="h-11 shrink-0 bg-ink px-3 font-display font-extrabold text-primary-foreground shadow-none">
+            {demoBusy ? "Loading receipts…" : "Try the demo →"}
+          </Button>
+        </div>
+      )}
+
+      <div className="-mx-4 mt-3 flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-1">
         {GENRES.map((g) => (
-          <button
+          <Button variant="ghost"
             key={g}
             onClick={() => setGenre(g)}
-            className={`meta shrink-0 rounded-sm border px-2.5 py-1.5 ${genre === g ? "border-ink bg-ink text-primary-foreground" : "bg-card"}`}
+            className={`meta h-auto shrink-0 rounded-sm border px-2.5 py-1.5 ${genre === g ? "border-ink bg-ink text-primary-foreground" : "bg-card"}`}
           >
             {g}
-          </button>
+          </Button>
         ))}
       </div>
-      <div className="mt-1.5 flex gap-1.5">
+      <div className="mt-1.5 grid shrink-0 grid-cols-4 gap-1">
         {TIERS.map((t) => (
-          <button
+          <Button variant="ghost"
             key={t.k}
             onClick={() => setTier(t.k)}
-            className={`meta rounded-sm px-2.5 py-1.5 ${tier === t.k ? "bg-mint text-ink" : "text-muted-foreground"}`}
+            className={`meta h-auto rounded-sm px-1 py-1.5 ${tier === t.k ? "bg-mint text-ink" : "text-muted-foreground"}`}
           >
             {t.label}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <div className="relative mt-4 h-[540px]">
+      <div className="relative mt-3 min-h-0 flex-1">
         {isLoading && <div className="meta absolute inset-0 grid place-items-center text-muted-foreground">Tuning in…</div>}
         {error && <div role="alert" className="meta absolute inset-0 grid place-items-center text-signal">Couldn't load artists. Refresh to retry.</div>}
         {!isLoading && !error && deck.length === 0 && (
@@ -161,15 +173,26 @@ function Discover() {
       </div>
 
       {topCard && (
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <button onClick={() => decide(topCard, "pass")} className="display rounded-md border border-ink bg-card py-4 text-xl active:bg-muted">
+        <div className="mt-6 grid shrink-0 grid-cols-2 gap-2">
+          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="display h-14 rounded-md border border-ink bg-card text-xl font-extrabold shadow-none active:bg-muted">
             Pass ←
-          </button>
-          <button onClick={() => decide(topCard, "call")} className="display rounded-md bg-signal py-4 text-xl text-primary-foreground active:bg-oxblood">
+          </Button>
+          <Button onClick={() => decide(topCard, "call")} className="display h-14 rounded-md bg-signal text-xl font-extrabold text-primary-foreground shadow-none hover:bg-oxblood active:bg-oxblood">
             Call it →
-          </button>
+          </Button>
         </div>
       )}
+      <Sheet open={callSheet && !user} onOpenChange={setCallSheet}>
+        <SheetContent side="bottom" aria-describedby={undefined} className="bottom-[calc(64px_+_env(safe-area-inset-bottom)_+_12px)] inset-x-4 mx-auto max-w-md rounded-md border bg-card p-5 shadow-none">
+          <SheetTitle className="display pr-6 text-3xl">Lock in your call.</SheetTitle>
+          <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+            <Button onClick={tryDemo} disabled={demoBusy} className="h-11 bg-ink font-display font-extrabold shadow-none">
+              {demoBusy ? "Loading receipts…" : "Try the demo →"}
+            </Button>
+            <Button asChild variant="outline" className="h-11 shadow-none"><Link to="/auth">Sign in</Link></Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </PageShell>
   );
 }
@@ -197,7 +220,7 @@ function SwipeCard({ artist: a, top, depth, onDecide }: { artist: Artist; top: b
       onPointerMove={(e) => { if (start.current !== null) setDx(e.clientX - start.current); }}
       onPointerUp={release}
       onPointerCancel={release}
-      className="absolute inset-0 touch-none select-none overflow-hidden rounded-md border bg-card"
+      className="absolute inset-0 flex touch-pan-y select-none flex-col overflow-hidden rounded-md border bg-card"
       style={{
         transform: `translate(${x}px, ${depth * 10}px) rotate(${x / 18}deg) scale(${1 - depth * 0.04})`,
         transition: start.current === null ? "transform 260ms cubic-bezier(.2,.8,.2,1)" : "none",
@@ -205,7 +228,7 @@ function SwipeCard({ artist: a, top, depth, onDecide }: { artist: Artist; top: b
         cursor: top ? "grab" : "default",
       }}
     >
-      <div className="relative h-[58%]">
+      <div className="relative min-h-0 flex-1">
         <Aura mix={a.aura_mix} listeners={a.monthly_listeners} />
         <div className="absolute left-3 top-3 meta text-ink">{a.city} · {a.genre}</div>
         <div className="absolute right-3 top-3 meta text-ink">No. {String(a.callers_count).padStart(3, "0")}</div>
@@ -217,15 +240,16 @@ function SwipeCard({ artist: a, top, depth, onDecide }: { artist: Artist; top: b
         {dx > 40 && <div className="display absolute left-4 top-10 rotate-[-10deg] rounded-sm border-4 border-signal px-2 text-3xl text-signal">CALL IT</div>}
         {dx < -40 && <div className="display absolute right-4 top-10 rotate-[10deg] rounded-sm border-4 border-ink px-2 text-3xl text-ink">PASS</div>}
       </div>
-      <div className="flex h-[42%] flex-col p-4">
+      <div className="flex shrink-0 flex-col p-4">
+        {a.because && <p className="meta mb-2 text-muted-foreground">BECAUSE YOU LISTEN TO {a.because}</p>}
         <h2 className="display text-4xl">{a.name}</h2>
         <p className="mt-1.5 text-sm text-ink">{a.bio}</p>
-        <div className="mt-auto flex items-end justify-between gap-3">
-          <div>
+        <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+          <div className="min-w-0">
             <div className="numeral text-6xl text-signal">{fmt(a.monthly_listeners)}</div>
             <div className="meta mt-1 text-muted-foreground">Listeners · {Number(a.growth_rate) >= 0 ? "+" : ""}{Number(a.growth_rate)}%/mo</div>
           </div>
-          <svg viewBox="0 0 100 30" className="h-10 w-28" preserveAspectRatio="none">
+          <svg viewBox="0 0 100 30" className="h-10 w-20 shrink-0 sm:w-28" preserveAspectRatio="none">
             <polyline points={spark(a)} fill="none" stroke={Number(a.growth_rate) >= 0 ? "var(--deep-teal)" : "var(--signal)"} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
           </svg>
         </div>

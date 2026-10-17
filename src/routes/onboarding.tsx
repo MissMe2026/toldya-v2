@@ -7,6 +7,8 @@ import { GENRES } from "@/lib/toldya";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Welcome — ToldYa" },
       { name: "description", content: "Find artists before the hype. Call it. Get the receipts." },
       { property: "og:title", content: "Welcome — ToldYa" },

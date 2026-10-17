@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Aura } from "@/components/Aura";
 import { FastForward } from "@/components/FastForward";
+import { Button } from "@/components/ui/button";
 import { PageShell, SignInCta, TopBar } from "@/components/TabBar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
 import { fmt, fmtMult, isToldYa, receipts, stampDate, status } from "@/lib/toldya";
@@ -12,6 +13,8 @@ import { fmt, fmtMult, isToldYa, receipts, stampDate, status } from "@/lib/toldy
 export const Route = createFileRoute("/calls")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "My Calls — ToldYa" },
       { name: "description", content: "Your receipts: every artist you called before the hype." },
       { property: "og:title", content: "My Calls — ToldYa" },
@@ -109,11 +112,11 @@ function Calls() {
         })}
       </ul>
 
-      <div className="fixed bottom-20 right-4 z-30 flex flex-col items-end gap-2">
+      <div className="fixed bottom-20 left-4 z-30 flex flex-col items-start gap-2">
         {ffOpen && <div className="rounded-md border bg-card p-2"><div className="meta mb-1.5">Fast-forward time</div><FastForward compact /></div>}
-        <button onClick={() => setFfOpen(!ffOpen)} aria-expanded={ffOpen} className="display rounded-full bg-ink px-4 py-3 text-primary-foreground">
+        <Button onClick={() => setFfOpen(!ffOpen)} aria-expanded={ffOpen} className="display h-auto rounded-md bg-ink px-4 py-3 text-primary-foreground shadow-none">
           ⏩ {ffOpen ? "Close" : "Fast-forward"}
-        </button>
+        </Button>
       </div>
     </PageShell>
   );

@@ -11,6 +11,8 @@ import { receipts, type Artist, type Call, type Top8Item } from "@/lib/toldya";
 export const Route = createFileRoute("/r/$callId")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "TOLD YA. — a ToldYa receipt" },
       { name: "description", content: "Someone called this artist before the hype. Here's the receipt." },
       { property: "og:title", content: "TOLD YA. — a ToldYa receipt" },

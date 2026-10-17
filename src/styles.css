@@ -125,3 +125,16 @@
 @utility animate-stamp { animation: stamp-in 420ms cubic-bezier(.2,.9,.3,1.2) forwards; }
 @utility animate-flash { animation: flash-red 600ms ease-out forwards; }
 @utility animate-focus { animation: focus-in 600ms ease-out both; }
+
+.discover-shell {
+  height: calc(100dvh - var(--sim-banner-height, 0px));
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+body:has(.sticky.bg-mint) { --sim-banner-height: 27px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .discover-shell *, .discover-shell *::before, .discover-shell *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

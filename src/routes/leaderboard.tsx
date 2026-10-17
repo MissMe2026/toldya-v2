@@ -9,6 +9,8 @@ import { earScore, isToldYa, receipts } from "@/lib/toldya";
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Leaderboard — ToldYa" },
       { name: "description", content: "Who has the best ears? The ToldYa leaderboard." },
       { property: "og:title", content: "Leaderboard — ToldYa" },
@@ -44,6 +46,7 @@ function Leaderboard() {
   }, [board, tab, user, profile, calls, artists]);
 
   const myRank = rows.findIndex((r) => r.me) + 1;
+  const myRow = rows.find((r) => r.me);
 
   return (
     <PageShell>
@@ -61,6 +64,16 @@ function Leaderboard() {
         ))}
       </div>
       {isLoading && <p className="meta mt-6 text-muted-foreground">Counting ears…</p>}
+      {myRow && !isLoading && (
+        <div aria-label="Your pinned ranking" className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-sm bg-mint p-3 text-ink">
+          <div className="min-w-0">
+            <div className="meta">You · #{myRank}</div>
+            <div className="truncate font-display text-lg font-extrabold">@{myRow.handle}</div>
+            <div className="meta text-muted-foreground">{myRow.calls} calls · {myRow.hits} told ya</div>
+          </div>
+          <span className="numeral shrink-0 text-3xl">{myRow.score.toLocaleString()}</span>
+        </div>
+      )}
       <ol className="mt-1">
         {rows.map((r, i) => (
           <li key={r.id} className={`flex items-center gap-3 border-b py-3 ${r.me ? "-mx-2 rounded-sm bg-mint px-2" : ""}`}>

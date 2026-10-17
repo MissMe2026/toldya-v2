@@ -81,9 +81,18 @@ function Discover() {
   const saveCall = async (a: Artist, userId: string) => {
     setDone((s) => ({ ...s, [a.id]: "call" }));
     const at = new Date();
-    const { error } = await supabase.from("calls").insert({
+    const snapshot = {
       user_id: userId, artist_id: a.id, listeners_at_call: a.monthly_listeners, callers_at_call: a.callers_count,
-    });
+    };
+    let { error } = await supabase.from("calls").insert(snapshot);
+    // The selected artist can already be one of the demo's historical receipts.
+    // Refresh that receipt, preserving its Big Call star, rather than losing the pending call.
+    if (error?.code === "23505") {
+      const result = await supabase.from("calls").update({
+        listeners_at_call: a.monthly_listeners, callers_at_call: a.callers_count, called_at: at.toISOString(),
+      }).eq("user_id", userId).eq("artist_id", a.id);
+      error = result.error;
+    }
     if (error) {
       setDone((s) => { const n = { ...s }; delete n[a.id]; return n; });
       toast.error(error.code === "23505" ? "You already called this one." : "Couldn't save your call. Try again.");

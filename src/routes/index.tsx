@@ -50,8 +50,8 @@ function spark(a: Artist) {
 
 function Discover() {
   const { user, ready } = useAuth();
-  const { tryDemo, busy: demoBusy } = useTryDemo();
   const [callSheet, setCallSheet] = useState(false);
+  const pendingCall = useRef<Artist | null>(null);
   const { data, isLoading, error } = useArtists();
   const { data: profile } = useProfile();
   const { data: myCalls = [] } = useMyCalls();
@@ -78,16 +78,11 @@ function Discover() {
     return discoverDeck(data ?? [], { months, liked, genre, max, excluded });
   }, [data, genre, tier, done, myCalls, months, liked]);
 
-  const decide = async (a: Artist, d: "call" | "pass") => {
-    if (d === "pass") return setDone((s) => ({ ...s, [a.id]: d }));
-    if (!user) {
-      setCallSheet(true);
-      return;
-    }
-    setDone((s) => ({ ...s, [a.id]: d }));
+  const saveCall = async (a: Artist, userId: string) => {
+    setDone((s) => ({ ...s, [a.id]: "call" }));
     const at = new Date();
     const { error } = await supabase.from("calls").insert({
-      user_id: user.id, artist_id: a.id, listeners_at_call: a.monthly_listeners, callers_at_call: a.callers_count,
+      user_id: userId, artist_id: a.id, listeners_at_call: a.monthly_listeners, callers_at_call: a.callers_count,
     });
     if (error) {
       setDone((s) => { const n = { ...s }; delete n[a.id]; return n; });
@@ -100,6 +95,24 @@ function Discover() {
     toast.success(`Called it. ${a.name} at ${fmt(a.monthly_listeners)} listeners on ${niceDate(at)}.`);
     qc.invalidateQueries({ queryKey: ["calls"] });
     qc.invalidateQueries({ queryKey: ["artists"] });
+  };
+
+  const { tryDemo, busy: demoBusy } = useTryDemo({
+    onSignedIn: async (demoUser) => {
+      const artist = pendingCall.current;
+      pendingCall.current = null;
+      if (artist) await saveCall(artist, demoUser.id);
+    },
+  });
+
+  const decide = async (a: Artist, d: "call" | "pass") => {
+    if (d === "pass") return setDone((s) => ({ ...s, [a.id]: d }));
+    if (!user) {
+      pendingCall.current = a;
+      setCallSheet(true);
+      return;
+    }
+    await saveCall(a, user.id);
   };
 
   const topCard = deck[0];
@@ -137,12 +150,12 @@ function Discover() {
           </Button>
         ))}
       </div>
-      <div className="mt-1.5 grid shrink-0 grid-cols-4 gap-1">
+      <div className="-mx-4 mt-1.5 flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-1">
         {TIERS.map((t) => (
           <Button variant="ghost"
             key={t.k}
             onClick={() => setTier(t.k)}
-            className={`meta h-auto rounded-sm px-1 py-1.5 ${tier === t.k ? "bg-mint text-ink" : "text-muted-foreground"}`}
+            className={`meta h-auto shrink-0 rounded-sm border px-2.5 py-1.5 ${tier === t.k ? "bg-mint text-ink" : "bg-card text-muted-foreground"}`}
           >
             {t.label}
           </Button>
@@ -182,14 +195,14 @@ function Discover() {
           </Button>
         </div>
       )}
-      <Sheet open={callSheet && !user} onOpenChange={setCallSheet}>
-        <SheetContent side="bottom" aria-describedby={undefined} className="bottom-[calc(64px_+_env(safe-area-inset-bottom)_+_12px)] inset-x-4 mx-auto max-w-md rounded-md border bg-card p-5 shadow-none">
+      <Sheet open={callSheet} onOpenChange={(open) => { setCallSheet(open); if (!open) pendingCall.current = null; }}>
+        <SheetContent side="bottom" onEscapeKeyDown={(e) => e.preventDefault()} aria-describedby={undefined} className="bottom-[calc(64px_+_env(safe-area-inset-bottom)_+_12px)] inset-x-4 mx-auto max-w-md rounded-md border bg-card p-5 shadow-none">
           <SheetTitle className="display pr-6 text-3xl">Lock in your call.</SheetTitle>
           <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-            <Button onClick={tryDemo} disabled={demoBusy} className="h-11 bg-ink font-display font-extrabold shadow-none">
+            <Button onClick={() => { setCallSheet(false); void tryDemo(); }} disabled={demoBusy} className="h-11 bg-ink font-display font-extrabold shadow-none">
               {demoBusy ? "Loading receipts…" : "Try the demo →"}
             </Button>
-            <Button asChild variant="outline" className="h-11 shadow-none"><Link to="/auth">Sign in</Link></Button>
+            <Button asChild variant="outline" className="h-11 shadow-none"><Link to="/auth" onClick={() => { pendingCall.current = null; setCallSheet(false); }}>Sign in</Link></Button>
           </div>
         </SheetContent>
       </Sheet>

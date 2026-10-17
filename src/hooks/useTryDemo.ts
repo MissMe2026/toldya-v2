@@ -5,8 +5,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { prepareDemo } from "@/lib/demo.functions";
+import type { User } from "@supabase/supabase-js";
 
-export function useTryDemo() {
+export function useTryDemo(options: { onSignedIn?: (user: User) => Promise<void> } = {}) {
   const demo = useServerFn(prepareDemo);
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -18,8 +19,10 @@ export function useTryDemo() {
     setBusy(true);
     try {
       const creds = await demo();
-      const { error } = await supabase.auth.signInWithPassword(creds);
+      const { data, error } = await supabase.auth.signInWithPassword(creds);
       if (error) throw error;
+      if (!data.user) throw new Error("Demo sign-in did not return a user");
+      await options.onSignedIn?.(data.user);
       await qc.invalidateQueries();
       await navigate({ to: "/", replace: true });
       return true;

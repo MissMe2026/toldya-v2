@@ -76,7 +76,7 @@ function Calls() {
         </div>
       )}
 
-      <ul className="mt-4 space-y-3">
+      <ul className="mt-4 space-y-3 pb-[calc(48px_+_env(safe-area-inset-bottom))]">
         {rs.map((r) => {
           const st = status(r.mult);
           const ty = isToldYa(r);
@@ -112,9 +112,9 @@ function Calls() {
         })}
       </ul>
 
-      <div className="fixed bottom-20 left-4 z-30 flex flex-col items-start gap-2">
-        {ffOpen && <div className="rounded-md border bg-card p-2"><div className="meta mb-1.5">Fast-forward time</div><FastForward compact /></div>}
-        <Button onClick={() => setFfOpen(!ffOpen)} aria-expanded={ffOpen} className="display h-auto rounded-md bg-ink px-4 py-3 text-primary-foreground shadow-none">
+      <div className="fixed inset-x-0 bottom-[calc(64px_+_env(safe-area-inset-bottom))] z-30 bg-ink text-primary-foreground">
+        {ffOpen && <div className="absolute bottom-full inset-x-0 border-t bg-card text-ink"><div className="mx-auto max-w-md p-3"><div className="meta mb-1.5">Fast-forward time</div><FastForward compact /></div></div>}
+        <Button onClick={() => setFfOpen(!ffOpen)} aria-expanded={ffOpen} className="display h-11 w-full rounded-none bg-ink text-primary-foreground shadow-none hover:bg-ink">
           ⏩ {ffOpen ? "Close" : "Fast-forward"}
         </Button>
       </div>

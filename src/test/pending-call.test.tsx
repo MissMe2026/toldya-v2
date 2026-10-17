@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, cleanup } from "@testing-library/react";
+import { act, fireEvent, render, screen, cleanup, within } from "@testing-library/react";
 import type { ComponentType } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,7 +40,7 @@ describe("Pending Discover call", () => {
   it("saves the selected artist with current listeners for the newly signed-in judge", async () => {
     render(<Discover />);
     fireEvent.click(screen.getByRole("button", { name: "Call it →" }));
-    await act(async () => { fireEvent.click(screen.getByRole("dialog").querySelector("button:not([class*='absolute'])") as HTMLElement); });
+    await act(async () => { fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Try the demo →" })); });
     expect(mocks.insert).toHaveBeenCalledWith({ user_id: "new-judge", artist_id: "artist-1", listeners_at_call: 820, callers_at_call: 12 });
     expect(mocks.success).toHaveBeenCalledWith(expect.stringContaining("Called it. Pending Artist at 820"));
     expect(screen.getByText("CALLED ©")).toBeInTheDocument();

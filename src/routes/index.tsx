@@ -78,7 +78,7 @@ function Discover() {
     return discoverDeck(data ?? [], { months, liked, genre, max, excluded });
   }, [data, genre, tier, done, myCalls, months, liked]);
 
-  const saveCall = async (a: Artist, userId: string) => {
+  const saveCall = async (a: Artist, userId: string, refreshSeeded = false) => {
     setDone((s) => ({ ...s, [a.id]: "call" }));
     const at = new Date();
     const snapshot = {
@@ -87,7 +87,7 @@ function Discover() {
     let { error } = await supabase.from("calls").insert(snapshot);
     // The selected artist can already be one of the demo's historical receipts.
     // Refresh that receipt, preserving its Big Call star, rather than losing the pending call.
-    if (error?.code === "23505") {
+    if (refreshSeeded && error?.code === "23505") {
       const result = await supabase.from("calls").update({
         listeners_at_call: a.monthly_listeners, callers_at_call: a.callers_count, called_at: at.toISOString(),
       }).eq("user_id", userId).eq("artist_id", a.id);
@@ -110,7 +110,7 @@ function Discover() {
     onSignedIn: async (demoUser) => {
       const artist = pendingCall.current;
       pendingCall.current = null;
-      if (artist) await saveCall(artist, demoUser.id);
+      if (artist) await saveCall(artist, demoUser.id, true);
     },
   });
 

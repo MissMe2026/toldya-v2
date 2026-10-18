@@ -54,19 +54,19 @@ function AuthPage() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-[calc(88px_+_env(safe-area-inset-bottom))]">
       <div className="bg-signal px-5 pb-8 pt-6 text-primary-foreground">
         <div className="flex justify-between meta"><span>ToldYa®</span><span>Est. 2026</span></div>
         <p className="caps-block mt-16 max-w-[16rem] text-xs">
           Call the next big artist before they blow up. Your call is timestamped with their listener count. That's your proof.
         </p>
-        <h1 className="display mt-8 text-7xl">Called<br />it.</h1>
+        <h1 className="display mt-8 text-7xl">called it.</h1>
       </div>
       <div className="flex-1 px-5 py-6">
         <Button
           onClick={tryDemo}
           disabled={!!busy || demoBusy}
-          className="display h-auto w-full rounded-md bg-ink py-5 text-2xl text-primary-foreground shadow-none disabled:opacity-60"
+          className="w-full shadow-none"
         >
           {demoBusy ? "Loading receipts…" : "Try the demo →"}
         </Button>
@@ -84,23 +84,23 @@ function AuthPage() {
             {mode === "up" && (
               <label className="block">
                 <span className="meta">Handle</span>
-                <input required value={handle} onChange={(e) => setHandle(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-signal" />
+                <input required value={handle} onChange={(e) => setHandle(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-ink" />
               </label>
             )}
             <label className="block">
               <span className="meta">Email</span>
-              <input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-signal" />
+              <input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-ink" />
             </label>
             <label className="block">
               <span className="meta">Password</span>
-              <input required minLength={6} type="password" autoComplete={mode === "in" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-signal" />
+              <input required minLength={6} type="password" autoComplete={mode === "in" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-sm border bg-card px-3 py-2.5 text-sm outline-none focus:border-ink" />
             </label>
-            <button disabled={!!busy || demoBusy} className="display mt-2 w-full rounded-md bg-signal py-3.5 text-xl text-primary-foreground active:bg-oxblood disabled:opacity-60">
+            <Button type="submit" disabled={!!busy || demoBusy} className="mt-2 w-full">
               {busy === "form" ? "…" : mode === "in" ? "Sign in" : "Create account"}
-            </button>
-            <button type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="meta w-full py-2 text-muted-foreground underline">
+            </Button>
+            <Button variant="link" type="button" onClick={() => setMode(mode === "in" ? "up" : "in")} className="meta w-full text-ink underline">
               {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
-            </button>
+            </Button>
           </form>
         )}
       </div>

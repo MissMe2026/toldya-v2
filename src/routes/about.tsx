@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell, TopBar } from "@/components/TabBar";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -28,20 +29,20 @@ function About() {
     <PageShell>
       <TopBar n="About" />
       <div className="relative mt-8 flex gap-4">
-        <span aria-hidden className="meta [writing-mode:vertical-rl] rotate-180 text-signal">EST. 16.10.2026</span>
-        <h1 className="display text-6xl">Tomorrow's<br />charts,<br /><span className="text-signal">today.</span></h1>
+        <span aria-hidden className="meta [writing-mode:vertical-rl] rotate-180 text-ink">EST. 16.10.2026</span>
+        <h1 className="display min-w-0 text-5xl text-ink">Tomorrow's<br />charts,<br />today.</h1>
       </div>
-      <section className="mt-10 bg-signal p-5 text-primary-foreground">
-        <div className="meta">The problem</div>
+      <section className="mt-10 text-ink">
+        <h2 className="meta border-b pb-1.5">The problem</h2>
         <p className="caps-block mt-3 text-sm">Fans who find artists early have no proof and no payoff. Streaming apps show what's already popular. Nobody tracks who heard it first.</p>
       </section>
       <section className="mt-8">
         <h2 className="meta border-b pb-1.5">How it works</h2>
         <ol>
           {HOW.map(([t, d], i) => (
-            <li key={t} className="flex items-baseline justify-between gap-3 border-b border-signal/40 py-3">
-              <span className="display text-2xl text-signal">({i + 1}) {t}</span>
-              <span className="max-w-[11rem] text-right text-xs">{d}</span>
+            <li key={t} className="grid grid-cols-2 items-baseline gap-3 border-b py-3">
+              <span className="flex items-baseline gap-2 text-ink"><span className="meta">({i + 1})</span><span className="font-display text-xl font-extrabold">{t}</span></span>
+              <span className="text-right text-xs">{d}</span>
             </li>
           ))}
         </ol>
@@ -52,7 +53,7 @@ function About() {
           {NEXT.map((n) => <li key={n} className="mb-2 break-inside-avoid">* {n}</li>)}
         </ul>
       </section>
-      <Link to="/" className="display mt-8 inline-block rounded-md bg-ink px-5 py-3 text-xl text-primary-foreground">Start calling →</Link>
+      <Button asChild className="mt-8"><Link to="/">Start calling →</Link></Button>
     </PageShell>
   );
 }

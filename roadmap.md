@@ -1,4 +1,5 @@
 # Discover phone update
+- [x] Limit Board to Top 10, add six deterministic genre Top 3 boards, and verify both periods on a fresh phone demo.
 - [x] Add matching cool user aura avatars to Board and Profile; verify both ranking periods with a fresh demo at 375×812.
 - [x] Add full-bleed sticky red main-tab banners with linked simulation strip and safe-area/status-bar color.
 - [x] Verify compact phone Discover and scrolling Calls/Board banners without changing behavior.

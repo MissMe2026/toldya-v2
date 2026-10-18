@@ -23,7 +23,10 @@ vi.mock("@/hooks/useTryDemo", () => ({ useTryDemo: (options: { onSignedIn: typeo
   return { busy: false, tryDemo: async () => { await mocks.onSignedIn?.({ id: "new-judge" }); } };
 } }));
 vi.mock("@/components/Aura", () => ({ Aura: () => null }));
-vi.mock("@/components/TabBar", () => ({ PageShell: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }));
+vi.mock("@/components/TabBar", () => ({
+  PageShell: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  TopBar: ({ right }: { right?: React.ReactNode }) => <header>{right}</header>,
+}));
 
 import { Route } from "@/routes/index";
 const Discover = Route.options.component as ComponentType;

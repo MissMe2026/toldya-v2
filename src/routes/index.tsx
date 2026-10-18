@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Logo } from "@/components/Logo";
 import { Aura } from "@/components/Aura";
 import { PageShell } from "@/components/TabBar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
@@ -35,22 +36,10 @@ const TIERS = [
   { k: "100k", label: "Under 100K", max: 100000 },
 ];
 
-function spark(a: Artist) {
-  let seed = a.name.length * 97 + a.monthly_listeners;
-  const pts: number[] = [];
-  let v = 50;
-  for (let i = 0; i < 30; i++) {
-    seed = (seed * 9301 + 49297) % 233280;
-    v += Number(a.growth_rate) / 30 + (seed / 233280 - 0.5) * 6;
-    pts.push(v);
-  }
-  const min = Math.min(...pts), max = Math.max(...pts);
-  return pts.map((p, i) => `${(i / 29) * 100},${28 - ((p - min) / (max - min || 1)) * 26}`).join(" ");
-}
-
 function Discover() {
   const { user, ready } = useAuth();
   const [callSheet, setCallSheet] = useState(false);
+  const [filterSheet, setFilterSheet] = useState(false);
   const pendingCall = useRef<Artist | null>(null);
   const { data, isLoading, error } = useArtists();
   const { data: profile } = useProfile();
@@ -129,53 +118,43 @@ function Discover() {
 
   return (
     <PageShell fitScreen>
-      <header className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
-        <div className="min-w-0">
-          <h1 className="display text-5xl text-signal">Before<br />the hype.</h1>
-        </div>
-        <div className="shrink-0 text-right">
-          <div className="display text-lg">ToldYa®</div>
-          <div className="meta mt-1 text-muted-foreground">{calls} calls · {deck.length} left</div>
+      <header className="flex shrink-0 items-center justify-between gap-2">
+        <Logo />
+        <div className="flex items-center gap-2">
+          <span className="meta text-muted-foreground">{calls} calls · {deck.length} left</span>
+          <Button variant="outline" onClick={() => setFilterSheet(true)} className="h-11 rounded-[6px] px-2.5 font-mono text-[10px] uppercase" aria-label="Filter">Filter</Button>
         </div>
       </header>
 
       {ready && !user && (
-        <div className="mt-3 grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-sm bg-signal p-2 text-primary-foreground">
-          <span className="meta min-w-0">JUDGES START HERE</span>
-          <Button onClick={tryDemo} disabled={demoBusy} className="h-11 shrink-0 bg-ink px-3 font-display font-extrabold text-primary-foreground shadow-none">
+        <div className="mt-2 flex shrink-0 items-center justify-between gap-2 border-y py-2">
+          <span className="meta text-muted-foreground">JUDGES START HERE</span>
+          <Button onClick={tryDemo} disabled={demoBusy} className="h-11 px-3 text-sm">
             {demoBusy ? "Loading receipts…" : "Try the demo →"}
           </Button>
         </div>
       )}
 
-      <div className="-mx-4 mt-3 flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-1">
-        {GENRES.map((g) => (
-          <Button variant="ghost"
-            key={g}
-            onClick={() => setGenre(g)}
-            className={`meta h-auto shrink-0 rounded-sm border px-2.5 py-1.5 ${genre === g ? "border-ink bg-ink text-primary-foreground" : "bg-card"}`}
-          >
-            {g}
-          </Button>
-        ))}
-      </div>
-      <div className="-mx-4 mt-1.5 flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-1">
-        {TIERS.map((t) => (
-          <Button variant="ghost"
-            key={t.k}
-            onClick={() => setTier(t.k)}
-            className={`meta h-auto shrink-0 rounded-sm border px-2.5 py-1.5 ${tier === t.k ? "bg-mint text-ink" : "bg-card text-muted-foreground"}`}
-          >
-            {t.label}
-          </Button>
-        ))}
-      </div>
+      <Sheet open={filterSheet} onOpenChange={setFilterSheet}>
+        <SheetContent side="bottom" aria-describedby={undefined} className="mx-auto max-w-md rounded-t-[6px] border bg-card pb-[calc(24px_+_env(safe-area-inset-bottom))] shadow-none">
+          <SheetTitle className="display text-3xl">Filter.</SheetTitle>
+          <p className="meta mb-2 mt-6 text-muted-foreground">Genre</p>
+          <div className="-mx-6 flex gap-1.5 overflow-x-auto px-6 pb-2">
+            {GENRES.map((g) => <Button variant="ghost" key={g} onClick={() => setGenre(g)} aria-pressed={genre === g} className={`h-11 shrink-0 rounded-[6px] border px-2.5 text-sm ${genre === g ? "border-ink bg-ink text-primary-foreground" : "bg-card"}`}>{g}</Button>)}
+          </div>
+          <p className="meta mb-2 mt-4 text-muted-foreground">Listeners</p>
+          <div className="-mx-6 flex gap-1.5 overflow-x-auto px-6 pb-2">
+            {TIERS.map((t) => <Button variant="ghost" key={t.k} onClick={() => setTier(t.k)} aria-pressed={tier === t.k} className={`h-11 shrink-0 rounded-[6px] border px-2.5 text-sm ${tier === t.k ? "bg-mint text-ink" : "bg-card text-muted-foreground"}`}>{t.label}</Button>)}
+          </div>
+          <Button onClick={() => setFilterSheet(false)} className="mt-6 w-full">Done</Button>
+        </SheetContent>
+      </Sheet>
 
       <div className="relative mt-3 min-h-0 flex-1">
         {isLoading && <div className="meta absolute inset-0 grid place-items-center text-muted-foreground">Tuning in…</div>}
-        {error && <div role="alert" className="meta absolute inset-0 grid place-items-center text-signal">Couldn't load artists. Refresh to retry.</div>}
+        {error && <div role="alert" className="meta absolute inset-0 grid place-items-center text-ink">Couldn't load artists. Refresh to retry.</div>}
         {!isLoading && !error && deck.length === 0 && (
-          <div className="absolute inset-0 flex flex-col justify-between rounded-md bg-signal p-5 text-primary-foreground">
+          <div className="absolute inset-0 flex flex-col justify-between rounded-md bg-card p-5 text-ink">
             <p className="caps-block text-xs">Deck empty. Change the filters or come back tomorrow — new artists drop daily.</p>
             <div className="display text-7xl">THAT'S ALL.</div>
           </div>
@@ -185,9 +164,9 @@ function Discover() {
         ))}
         {called && (
           <div className="pointer-events-none absolute inset-0 z-30 grid place-items-center">
-            <div className="animate-flash absolute inset-0 rounded-md bg-signal" />
-            <div className="animate-stamp rounded-sm border-4 border-signal bg-card px-5 py-3 text-center">
-              <div className="display text-5xl text-signal">CALLED ©</div>
+            <div className="animate-flash absolute inset-0 rounded-md bg-mint" />
+            <div className="animate-stamp rounded-sm border-4 border-ink bg-card px-5 py-3 text-center">
+              <div className="display text-5xl text-ink">CALLED ©</div>
               <div className="meta mt-2 text-ink">AT {called.a.monthly_listeners.toLocaleString()} LISTENERS · {stamp(called.at)}</div>
             </div>
           </div>
@@ -195,11 +174,11 @@ function Discover() {
       </div>
 
       {topCard && (
-        <div className="mt-6 grid shrink-0 grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="display h-14 rounded-md border border-ink bg-card text-xl font-extrabold shadow-none active:bg-muted">
+        <div className="mt-5 grid shrink-0 grid-cols-2 gap-2">
+          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="h-[52px] rounded-[6px] border border-ink bg-card text-base font-medium shadow-none hover:bg-card active:bg-muted">
             Pass ←
           </Button>
-          <Button onClick={() => decide(topCard, "call")} className="display h-14 rounded-md bg-signal text-xl font-extrabold text-primary-foreground shadow-none hover:bg-oxblood active:bg-oxblood">
+          <Button onClick={() => decide(topCard, "call")} className="h-[52px] rounded-[6px] bg-signal text-base font-medium text-primary-foreground shadow-none hover:bg-signal/90 active:bg-signal/90">
             Call it →
           </Button>
         </div>
@@ -208,10 +187,10 @@ function Discover() {
         <SheetContent side="bottom" onEscapeKeyDown={(e) => e.preventDefault()} aria-describedby={undefined} className="bottom-[calc(64px_+_env(safe-area-inset-bottom)_+_12px)] inset-x-4 mx-auto max-w-md rounded-md border bg-card p-5 shadow-none">
           <SheetTitle className="display pr-6 text-3xl">Lock in your call.</SheetTitle>
           <div className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-            <Button onClick={() => { setCallSheet(false); void tryDemo(); }} disabled={demoBusy} className="h-11 bg-ink font-display font-extrabold shadow-none">
+            <Button onClick={() => { setCallSheet(false); void tryDemo(); }} disabled={demoBusy} className="bg-ink shadow-none">
               {demoBusy ? "Loading receipts…" : "Try the demo →"}
             </Button>
-            <Button asChild variant="outline" className="h-11 shadow-none"><Link to="/auth" onClick={() => { pendingCall.current = null; setCallSheet(false); }}>Sign in</Link></Button>
+            <Button asChild variant="outline" className="shadow-none"><Link to="/auth" onClick={() => { pendingCall.current = null; setCallSheet(false); }}>Sign in</Link></Button>
           </div>
         </SheetContent>
       </Sheet>
@@ -252,33 +231,33 @@ function SwipeCard({ artist: a, top, depth, onDecide }: { artist: Artist; top: b
     >
       <div className="relative min-h-0 flex-1">
         <Aura mix={a.aura_mix} listeners={a.monthly_listeners} />
-        <div className="absolute left-3 top-3 meta text-ink">{a.city} · {a.genre}</div>
-        <div className="absolute right-3 top-3 meta text-ink">No. {String(a.callers_count).padStart(3, "0")}</div>
-        <div className="absolute bottom-3 left-3 right-3">
-          <div className="flex items-center justify-between meta text-ink"><span>Hype</span><span>{h} %</span></div>
-          <div className="mt-1 h-1.5 bg-card/70"><div className="h-full bg-mint" style={{ width: `${h}%` }} /></div>
-        </div>
-        <span className="absolute -right-6 top-1/2 origin-center -translate-y-1/2 rotate-90 meta text-ink/60">{a.genre} · {a.city}</span>
-        {dx > 40 && <div className="display absolute left-4 top-10 rotate-[-10deg] rounded-sm border-4 border-signal px-2 text-3xl text-signal">CALL IT</div>}
-        {dx < -40 && <div className="display absolute right-4 top-10 rotate-[10deg] rounded-sm border-4 border-ink px-2 text-3xl text-ink">PASS</div>}
+        <div className="absolute left-3 top-3 meta text-ink">No. {String(a.callers_count).padStart(3, "0")}</div>
+        <div className="absolute right-3 top-3 meta text-ink">{a.genre} · {a.city}</div>
+        {dx > 40 && <div className="display absolute left-4 top-10 rotate-[-10deg] border-4 border-ink bg-card px-2 text-3xl text-ink">CALL IT</div>}
+        {dx < -40 && <div className="display absolute right-4 top-10 rotate-[10deg] border-4 border-ink bg-card px-2 text-3xl text-ink">PASS</div>}
       </div>
-      <div className="flex shrink-0 flex-col p-4">
-        {a.because && <p className="meta mb-2 text-muted-foreground">BECAUSE YOU LISTEN TO {a.because}</p>}
-        <h2 className="display text-4xl">{a.name}</h2>
-        <p className="mt-1.5 text-sm text-ink">{a.bio}</p>
-        <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
-          <div className="min-w-0">
-            <div className="numeral text-6xl text-signal">{fmt(a.monthly_listeners)}</div>
-            <div className="meta mt-1 text-muted-foreground">Listeners · {Number(a.growth_rate) >= 0 ? "+" : ""}{Number(a.growth_rate)}%/mo</div>
+      <div className="shrink-0 bg-card px-3 pb-3 pt-2">
+        <div className="flex items-baseline gap-2"><span className="numeral text-[48px] text-ink">{h}</span><span className="meta text-muted-foreground">% Hype</span></div>
+        <div className="mt-2 h-1 bg-muted"><div className="h-full bg-mint" style={{ width: `${h}%` }} /></div>
+      </div>
+      <div className="flex shrink-0 flex-col px-3 pb-3">
+        {a.because && <p className="meta mb-2 text-deep-teal">BECAUSE YOU LISTEN TO {a.because}</p>}
+        <h2 className="display break-words text-[40px]">{a.name}</h2>
+        <div className="mt-3 grid grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] items-start gap-3">
+          <div className="numeral min-w-0 text-[64px] text-ink">{fmt(a.monthly_listeners)}</div>
+          <div className="min-w-0 border-l pl-3">
+            <p className="text-[11px] leading-snug text-ink">{a.bio}</p>
+            <p className="meta mt-2 text-muted-foreground">Listeners · {Number(a.growth_rate) >= 0 ? "+" : ""}{Number(a.growth_rate)}%/mo</p>
           </div>
-          <svg viewBox="0 0 100 30" className="h-10 w-20 shrink-0 sm:w-28" preserveAspectRatio="none">
-            <polyline points={spark(a)} fill="none" stroke={Number(a.growth_rate) >= 0 ? "var(--deep-teal)" : "var(--signal)"} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-          </svg>
-        </div>
-        <div className="mt-3 flex justify-between border-t pt-2 meta text-muted-foreground">
-          <span>ToldYa®</span><span>{a.callers_count} people called it</span>
         </div>
       </div>
+      <dl className="grid shrink-0 grid-cols-4 border-t px-3 py-3">
+        {[
+          ["1 Genre", a.genre], ["2 City", a.city],
+          ["3 Tier", a.monthly_listeners < 1000 ? "<1K" : a.monthly_listeners < 10000 ? "<10K" : a.monthly_listeners < 100000 ? "<100K" : "100K+"],
+          ["4 Callers", String(a.callers_count)],
+        ].map(([label, value]) => <div key={label} className="min-w-0 pr-1"><dt className="meta font-bold">{label}</dt><dd className="mt-1 break-words text-[10px] leading-tight text-muted-foreground">{value}</dd></div>)}
+      </dl>
     </div>
   );
 }

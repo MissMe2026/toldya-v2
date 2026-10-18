@@ -61,14 +61,14 @@
   --secondary: oklch(1 0 0);
   --secondary-foreground: var(--ink);
   --muted: oklch(0.93 0.005 95);
-  --muted-foreground: oklch(0.42 0 0);
+  --muted-foreground: oklch(0.525 0.006 95);
   --accent: var(--mint);
   --accent-foreground: var(--ink);
   --destructive: var(--signal);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.145 0 0 / 14%);
+  --border: oklch(0.145 0 0 / 18%);
   --input: oklch(0.145 0 0 / 18%);
-  --ring: var(--signal);
+  --ring: var(--ink);
 }
 
 @layer base {
@@ -84,13 +84,13 @@
 @utility display {
   font-family: var(--font-display);
   font-weight: 900;
-  letter-spacing: -0.055em;
+   letter-spacing: 0;
   line-height: 0.9;
 }
 @utility numeral {
   font-family: var(--font-display);
   font-weight: 200;
-  letter-spacing: -0.05em;
+   letter-spacing: 0;
   line-height: 0.85;
   font-variant-numeric: tabular-nums;
 }

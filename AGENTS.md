@@ -19,3 +19,4 @@
 - Demo historical snapshots and identity generation live in a browser-safe pure module with tests, keeping time-based receipt rules independently verifiable.
 - Discover ordering lives in a browser-safe pure helper, tested independently, so taste priority and growth ordering stay deterministic.
 - Discover uses a viewport-height PageShell with a flexible aura and intrinsic card details, reserving safe-area-aware space for tabs and actions.
+- Main-tab headers share the Logo component so the wordmark can be replaced centrally without changing each page.

@@ -35,7 +35,7 @@ function ProfilePage() {
   const rs = useMemo(() => receipts(calls, artists, profile?.sim_months ?? 0), [calls, artists, profile]);
   const taste = useMemo(() => tasteProfile(profile?.connected ?? {}), [profile]);
 
-  if (ready && !user) return <PageShell><TopBar n="(4) You" /><h1 className="display mt-10 text-6xl text-signal">You heard<br />it first.</h1><SignInCta what="see your profile" /></PageShell>;
+  if (ready && !user) return <PageShell><TopBar n="(4) You" /><h1 className="display mt-10 text-6xl text-ink">You heard<br />it first.</h1><SignInCta what="see your profile" /></PageShell>;
   if (isLoading || !profile) return <PageShell><TopBar n="(4) You" /><p className="meta mt-10 text-muted-foreground">Loading…</p></PageShell>;
 
   const score = earScore(rs);
@@ -61,7 +61,7 @@ function ProfilePage() {
         </div>
         <div className="min-w-0">
           <div className="meta text-muted-foreground">Ear Score</div>
-          <div className="numeral text-7xl text-signal">{score.toLocaleString()}</div>
+          <div className="numeral text-7xl text-ink">{score.toLocaleString()}</div>
         </div>
       </header>
       <h1 className="display mt-3 break-words text-5xl">@{profile.handle}</h1>
@@ -80,7 +80,7 @@ function ProfilePage() {
       <Section n="(2)" title="Badges">
         <div className="grid grid-cols-2 gap-2">
           {bs.map((b) => (
-            <div key={b.key} className={`stamp relative rounded-sm p-3 ${b.earned ? "bg-signal text-primary-foreground" : "border border-dashed bg-card opacity-60"}`}>
+            <div key={b.key} className={`stamp relative rounded-sm p-3 ${b.earned ? "bg-ink text-primary-foreground" : "border border-dashed bg-card opacity-60"}`}>
               <div className="flex justify-between meta"><span>No. {b.no}</span><span>{b.earned ? "Earned" : "Locked"}</span></div>
               <div className="display mt-5 text-2xl">{b.name}{b.count > 1 ? ` ×${b.count}` : ""}</div>
               <div className="meta mt-1 normal-case opacity-90">{b.desc}</div>
@@ -96,7 +96,7 @@ function ProfilePage() {
           <ol>
             {big.map((r, i) => (
               <li key={r.call.id} className="flex items-baseline justify-between border-b py-2.5">
-                <span><span className="display mr-2 text-signal">({i + 1})</span><span className="font-display font-extrabold">{r.artist.name}</span></span>
+                <span><span className="display mr-2 text-ink">({i + 1})</span><span className="font-display font-extrabold">{r.artist.name}</span></span>
                 <span className="meta">{fmt(r.call.listeners_at_call)} → {fmt(r.now)} · {fmtMult(r.mult)}</span>
               </li>
             ))}
@@ -113,7 +113,7 @@ function ProfilePage() {
           <p className="text-sm">Connect a listening app to build your taste profile.</p>
         ) : (
           <>
-            <div className="display text-3xl text-signal">{taste.words.join(". ")}.</div>
+            <div className="display text-3xl text-ink">{taste.words.join(". ")}.</div>
             <ul className="mt-3 space-y-1.5">
               {taste.top.slice(0, 5).map((g) => (
                 <li key={g.genre} className="flex items-center gap-2">
@@ -125,7 +125,7 @@ function ProfilePage() {
             </ul>
             <div className="mt-4">
               <div className="flex justify-between meta"><span>Underground</span><span>Mainstream</span></div>
-              <div className="relative mt-1 h-2 bg-muted"><span className="absolute top-1/2 h-4 w-1 -translate-y-1/2 bg-signal" style={{ left: `${taste.mainstream}%` }} /></div>
+              <div className="relative mt-1 h-2 bg-muted"><span className="absolute top-1/2 h-4 w-1 -translate-y-1/2 bg-ink" style={{ left: `${taste.mainstream}%` }} /></div>
             </div>
             <div className="meta mt-3 text-muted-foreground">Sources: {taste.sources.length} connected</div>
           </>
@@ -153,8 +153,8 @@ function Stat({ k, v, mid }: { k: string; v: string; mid?: boolean }) {
 function Section({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-8">
-      <h2 className="mb-3 flex items-baseline justify-between border-b border-signal pb-1.5">
-        <span className="display text-2xl"><span className="text-signal">{n}</span> {title}</span>
+      <h2 className="mb-3 flex items-baseline justify-between border-b border-border pb-1.5">
+        <span className="display text-2xl"><span className="text-ink">{n}</span> {title}</span>
       </h2>
       {children}
     </section>
@@ -206,7 +206,7 @@ function Top8({ userId, items, suggestions, catalog }: { userId: string; items: 
               <div className="absolute right-0.5 top-0.5 flex gap-0.5">
                 <button aria-label={`Move ${it.name} earlier`} onClick={() => move(i, i - 1)} className="meta px-0.5">‹</button>
                 <button aria-label={`Move ${it.name} later`} onClick={() => move(i, i + 1)} className="meta px-0.5">›</button>
-                <button aria-label={`Remove ${it.name}`} onClick={() => save(list.filter((_, j) => j !== i))} className="meta px-0.5 text-signal">×</button>
+                <button aria-label={`Remove ${it.name}`} onClick={() => save(list.filter((_, j) => j !== i))} className="meta px-0.5 text-ink">×</button>
               </div>
             </li>
           );
@@ -215,8 +215,8 @@ function Top8({ userId, items, suggestions, catalog }: { userId: string; items: 
       {adding && (
         <div className="mt-2 rounded-md border bg-card p-3">
           <form onSubmit={(e) => { e.preventDefault(); add(q); }} className="flex gap-2">
-            <input autoFocus aria-label="Search artists" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search or type any artist" className="flex-1 rounded-sm border px-2.5 py-2 text-sm outline-none focus:border-signal" />
-            <button className="meta rounded-sm bg-signal px-3 text-primary-foreground">Add</button>
+            <input autoFocus aria-label="Search artists" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search or type any artist" className="flex-1 rounded-sm border px-2.5 py-2 text-sm outline-none focus:border-ink" />
+            <button className="meta rounded-sm bg-ink px-3 text-primary-foreground">Add</button>
             <button type="button" onClick={() => setAdding(false)} className="meta px-1">Close</button>
           </form>
           <div className="mt-2 flex flex-wrap gap-1">

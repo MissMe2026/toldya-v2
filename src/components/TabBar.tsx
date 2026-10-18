@@ -1,5 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { Logo } from "@/components/Logo";
+import { Button } from "@/components/ui/button";
 
 const tabs = [
   { to: "/", label: "Discover", n: "(1)" },
@@ -14,18 +16,16 @@ export function TabBar() {
   const { pathname } = useLocation();
   if (HIDDEN.includes(pathname) || pathname.startsWith("/r/")) return null;
   return (
-    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t bg-card pb-[env(safe-area-inset-bottom)]">
+    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t bg-paper pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto grid h-16 max-w-md grid-cols-4">
         {tabs.map((t) => (
           <Link
             key={t.to}
             to={t.to}
             activeOptions={{ exact: true }}
-            className="flex flex-col items-start gap-0.5 px-3 py-3 text-foreground focus-visible:outline-2 focus-visible:outline-signal"
-            activeProps={{ className: "bg-ink text-primary-foreground" }}
+            className={`flex items-center justify-center border-t-[3px] px-2 font-sans text-xs font-medium focus-visible:outline-2 focus-visible:outline-ink ${pathname === t.to ? "border-ink text-ink" : "border-transparent text-muted-foreground"}`}
           >
-            <span className="meta opacity-70">{t.n}</span>
-            <span className="font-display text-sm font-extrabold tracking-tight">{t.label}</span>
+            <span>{t.label}</span>
           </Link>
         ))}
       </div>
@@ -40,7 +40,7 @@ export function PageShell({ children, fitScreen = false }: { children: ReactNode
 export function TopBar({ n, right }: { n: string; right?: ReactNode }) {
   return (
     <div className="flex items-center justify-between">
-      <Link to="/" className="display text-xl">ToldYa®</Link>
+      <Logo />
       <span className="meta text-muted-foreground">{right ?? n}</span>
     </div>
   );
@@ -48,9 +48,9 @@ export function TopBar({ n, right }: { n: string; right?: ReactNode }) {
 
 export function SignInCta({ what }: { what: string }) {
   return (
-    <div className="mt-10 rounded-md bg-signal p-5 text-primary-foreground">
+    <div className="mt-10 border-y py-5 text-ink">
       <p className="caps-block text-xs">Sign in to {what}. Judges: one tap on "Try the demo" gets you a loaded account.</p>
-      <Link to="/auth" className="display mt-10 inline-block rounded-md bg-card px-5 py-3 text-xl text-signal">Sign in →</Link>
+      <Button asChild className="mt-6"><Link to="/auth">Sign in →</Link></Button>
     </div>
   );
 }

@@ -1,4 +1,7 @@
 # Discover phone update
+- [x] Apply the spec-sheet brand, shared Logo and neutral tabs without changing data or functionality.
+- [x] Restyle Discover and move existing filters into a sheet; preserve pending-call and demo flows.
+- [x] Verify tests and no-scroll phone layout, filters, and call flow.
 - [x] Preserve the pending call through demo sign-in and keep the call sheet explicitly controlled.
 - [x] Space and horizontally scroll listener chips; move Fast-forward to a slim bottom bar with receipt clearance.
 - [x] Test the pending-call journey and check phone layout.

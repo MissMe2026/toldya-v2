@@ -23,3 +23,4 @@
 - [x] Verify phone overflow, tab clearance, badge states, Top 8 editing/reordering and ranking tabs.
 - [x] Finish Connected Apps, Auth, Onboarding, About and Discover filter spec-sheet styling without changing behavior.
 - [x] Verify every page and remaining sheets at 375×812, including connected-app permissions and onboarding selections.
+- [ ] Rename the Lovable web address from artist-tally-keeper to a ToldYa name, then publish.

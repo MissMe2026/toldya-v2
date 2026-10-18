@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { Aura } from "./Aura";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "./Logo";
 import { fmt, fmtMult, isToldYa, type Receipt } from "@/lib/toldya";
 
 export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void }) {
@@ -25,7 +26,7 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
     <div role="dialog" aria-modal="true" aria-label="Told ya" className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-signal text-primary-foreground">
       <div className="animate-flash absolute inset-0 bg-card" />
       <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-[calc(80px_+_env(safe-area-inset-bottom))] pt-[calc(24px_+_env(safe-area-inset-top))]">
-        <div className="flex justify-between meta"><span>ToldYa® · Badge earned</span><span>No. 01</span></div>
+        <div className="flex items-center justify-between gap-2 meta"><LogoMark /><span>Badge earned · No. 01</span></div>
         <h2 className="display mt-8 text-[86px]">told ya.</h2>
         <div className="animate-focus relative mx-auto mt-5 aspect-square w-[170px] shrink-0 overflow-hidden rounded-full">
           <Aura mix={r.artist.aura_mix} listeners={r.now} famous={isToldYa(r)} />

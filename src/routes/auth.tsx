@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTryDemo } from "@/hooks/useTryDemo";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/Logo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -56,7 +57,7 @@ function AuthPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-[calc(88px_+_env(safe-area-inset-bottom))]">
       <div className="bg-signal px-5 pb-8 pt-6 text-primary-foreground">
-        <div className="flex justify-between meta"><span>ToldYa®</span><span>Est. 2026</span></div>
+        <div className="flex items-center justify-between gap-3 meta"><LogoMark /><span>Est. 2026</span></div>
         <p className="caps-block mt-16 max-w-[16rem] text-xs">
           Call the next big artist before they blow up. Your call is timestamped with their listener count. That's your proof.
         </p>

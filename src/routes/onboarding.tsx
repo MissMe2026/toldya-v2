@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateProfile, useAuth } from "@/hooks/useAuth";
 import { GENRES } from "@/lib/toldya";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/Logo";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -46,7 +47,7 @@ function Onboarding() {
     return (
       <div className="mx-auto flex min-h-dvh max-w-md flex-col">
         <div className="flex-1 bg-signal px-5 pt-6 text-primary-foreground">
-          <div className="flex justify-between meta"><span>ToldYa®</span><span>{s.n} / (3)</span></div>
+          <div className="flex items-center justify-between gap-3 meta"><LogoMark /><span>{s.n} / (3)</span></div>
           <p className="caps-block mt-20 max-w-[17rem] text-sm">{s.top}</p>
         </div>
         <div className="relative h-[50dvh] min-h-[340px] overflow-hidden bg-card">
@@ -63,7 +64,7 @@ function Onboarding() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-md px-5 pb-[calc(104px_+_env(safe-area-inset-bottom))] pt-6">
-      <div className="flex justify-between meta"><span>ToldYa®</span><span>(4) Taste</span></div>
+      <div className="flex items-center justify-between gap-3 meta"><LogoMark /><span>(4) Taste</span></div>
       <h1 className="display mt-10 text-5xl">What do<br />you dig?</h1>
       <p className="mt-3 text-sm">Pick a few. We'll weight your Discover deck toward them.</p>
       <div className="mt-6 grid grid-cols-2 gap-2">

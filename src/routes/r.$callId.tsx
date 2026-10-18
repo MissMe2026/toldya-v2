@@ -5,6 +5,7 @@ import { getFontEmbedCSS, toPng } from "html-to-image";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareCard } from "@/components/ShareCard";
+import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { receipts, type Artist, type Call, type Top8Item } from "@/lib/toldya";
@@ -64,7 +65,7 @@ function SharePage() {
   return (
     <div className="mx-auto min-h-screen max-w-md px-4 pb-10 pt-5">
       <div className="flex items-center justify-between">
-        <Link to="/" className="display text-xl">ToldYa®</Link>
+        <Logo />
         <span className="meta text-muted-foreground">Receipt</span>
       </div>
       {isLoading && <p className="meta mt-10 text-muted-foreground">Pulling the receipt…</p>}

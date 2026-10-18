@@ -1,12 +1,6 @@
-type Mix = { core: string; mid: string; halo: string; shape: string; angle: number };
-
-const C: Record<string, string> = {
-  ink: "var(--ink)",
-  red: "var(--signal)",
-  oxblood: "var(--oxblood)",
-  mint: "var(--mint)",
-  teal: "var(--teal)",
-};
+import { useId } from "react";
+import { auraStyle, mosaicCells } from "@/lib/aura";
+import type { AuraMix } from "@/lib/toldya";
 
 export function blurFor(listeners: number) {
   if (listeners < 1000) return 44;
@@ -15,31 +9,33 @@ export function blurFor(listeners: number) {
   return 3;
 }
 
-export function Aura({ mix, listeners }: { mix: Mix; listeners: number }) {
-  const blur = blurFor(listeners);
-  const core = C["ink"];
-  const mid = C["red"];
-  const halo = mix.halo === "mint" ? C["mint"] : C["teal"];
-  const shape =
-    mix.shape === "capsule"
-      ? { width: "46%", height: "78%", borderRadius: "999px" }
-      : mix.shape === "silhouette"
-        ? { width: "60%", height: "70%", borderRadius: "50% 50% 12% 12% / 60% 60% 10% 10%" }
-        : { width: "68%", height: "68%", borderRadius: "50%" };
-  const grad = `radial-gradient(ellipse at 50% 45%, ${core} 0%, ${core} 8%, ${mid} 24%, ${mid} 48%, ${halo} 74%, transparent 100%)`;
-  const base: React.CSSProperties = {
-    position: "absolute",
-    left: "50%",
-    top: "50%",
-    ...shape,
-    transform: `translate(-50%,-50%) rotate(${mix.angle}deg)`,
-    filter: `blur(min(${blur}px, 12cqw)) saturate(1.6)`,
-    transition: "filter 600ms ease",
-  };
+export function Aura({ mix, listeners, famous = false }: { mix: AuraMix; listeners: number; famous?: boolean }) {
+  const id = useId().replace(/:/g, "");
+  const config = auraStyle(mix, listeners, famous);
+  const [core, mid, halo] = config.colors;
+  const silhouette = "M120 28 C95 28 84 48 84 69 C84 86 92 96 99 101 L99 110 C68 117 43 131 38 154 L30 199 Q120 224 210 199 L202 154 C197 131 172 117 141 110 L141 101 C148 96 156 86 156 69 C156 48 145 28 120 28Z";
+  const shape = (fill: string) => config.shape === "silhouette" ? <path d={silhouette} fill={fill} /> : config.shape === "capsule" ?
+    <rect x="74" y="20" width="92" height="200" rx="46" fill={fill} /> : <circle cx="120" cy="120" r="86" fill={fill} />;
   return (
-    <div className="absolute inset-0 overflow-hidden bg-card [container-type:size]">
-      <div style={{ ...base, background: C["teal"], opacity: 0.65, marginLeft: 12 }} />
-      <div style={{ ...base, background: grad }} />
+    <div className="absolute inset-0 overflow-hidden bg-card" data-aura={famous ? "famous" : config.mosaic ? "mosaic" : "cool"}>
+      <svg viewBox="0 0 240 240" className="h-full w-full" aria-hidden="true">
+        <defs>
+          <radialGradient id={`${id}-color`} cx="46%" cy="40%" r="64%">
+            <stop offset="0%" stopColor={core} /><stop offset="22%" stopColor={core} />
+            <stop offset="48%" stopColor={mid} /><stop offset="78%" stopColor={halo} />
+            <stop offset="100%" stopColor="var(--card)" />
+          </radialGradient>
+          <filter id={`${id}-blur`} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation={config.blur} />
+          </filter>
+          <filter id={`${id}-edge`} x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3" /></filter>
+        </defs>
+        <g transform={`rotate(${config.angle} 120 120)`}>
+          {!famous && <g transform="translate(6 0)" opacity="0.2" filter={`url(#${id}-edge)`}>{shape("var(--signal)")}</g>}
+          {config.mosaic ? <g shapeRendering="crispEdges">{mosaicCells(mix).map(c => <rect key={`${c.x}-${c.y}`} x={c.x} y={c.y} width="16" height="16" fill={c.color} opacity={c.opacity} />)}</g> :
+            <g filter={`url(#${id}-blur)`}>{shape(`url(#${id}-color)`)}</g>}
+        </g>
+      </svg>
     </div>
   );
 }

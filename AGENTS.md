@@ -22,3 +22,4 @@
 - Main-tab headers share the Logo component so the wordmark can be replaced centrally without changing each page.
 - Aura palette, focus stages and mosaic geometry live in a pure helper; earned receipt status explicitly supplies fame so general artist views remain independent of calls.
 - Receipt cards and social images share ReceiptDimension for listener measurements; PNG export waits for loaded fonts and embeds them at a square social resolution so downloaded receipts match the on-screen typography.
+- BadgeStamp renders derived badge state as perforated stamps; Profile retains its existing Top 8 persistence and ordering handlers while using neutral editable tiles.

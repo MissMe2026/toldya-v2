@@ -52,7 +52,7 @@ function Calls() {
 
   return (
     <PageShell>
-      <TopBar n="(2) Receipts" right={`${calls.length} calls`} />
+      <TopBar n="(2) Receipts" right={<span className="opacity-90">{`${calls.length} calls`}</span>} />
       <h1 className="display mt-8 text-[72px] text-ink">receipts.</h1>
       <div className="mt-6 flex items-center justify-between border-b pb-2">
         <div className="flex gap-1">

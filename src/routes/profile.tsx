@@ -55,7 +55,7 @@ function ProfilePage() {
 
   return (
     <PageShell>
-      <TopBar n="(4) You" right={<Button variant="ghost" onClick={signOut} className="meta h-8 px-0 font-mono text-[10px] underline">Sign out</Button>} />
+      <TopBar n="(4) You" right={<Button variant="ghost" onClick={signOut} className="meta h-8 px-0 font-mono text-[10px] text-primary-foreground opacity-90 underline hover:bg-transparent hover:text-primary-foreground">Sign out</Button>} />
 
       <header className="mt-6 flex items-center gap-3">
         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">

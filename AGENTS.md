@@ -20,6 +20,7 @@
 - Discover ordering lives in a browser-safe pure helper, tested independently, so taste priority and growth ordering stay deterministic.
 - Discover uses a viewport-height PageShell with a flexible aura and intrinsic card details, reserving safe-area-aware space for tabs and actions.
 - Headers and brand panels share Logo/LogoMark, rendering the canonical SVG asset inline so inherited colors and PNG exports use the same artwork.
+- Main-tab TopBar owns its embedded simulation strip in one sticky full-bleed header; PageShell reserves its intrinsic height so Discover and scrolling tabs share safe-area behavior without duplicate strips.
 - Aura palette, focus stages and mosaic geometry live in a pure helper; earned receipt status explicitly supplies fame so general artist views remain independent of calls.
 - Receipt cards and social images share ReceiptDimension for listener measurements; PNG export waits for loaded fonts and embeds them at a square social resolution so downloaded receipts match the on-screen typography.
 - BadgeStamp renders derived badge state as perforated stamps; Profile retains its existing Top 8 persistence and ordering handlers while using neutral editable tiles.

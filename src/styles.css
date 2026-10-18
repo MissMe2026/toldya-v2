@@ -44,7 +44,7 @@
   --radius: 5px;
   --paper: oklch(0.962 0.006 95);
   --ink: oklch(0.145 0 0);
-  --signal: oklch(0.55 0.215 27);
+  --signal: #D1141A;
   --oxblood: oklch(0.37 0.13 18);
   --mint: oklch(0.86 0.08 158);
   --teal: oklch(0.76 0.13 175);
@@ -128,10 +128,14 @@
 @utility animate-focus { animation: focus-in 600ms ease-out both; }
 
 .discover-shell {
-  height: calc(100dvh - var(--sim-banner-height, 0px));
+  height: 100dvh;
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
-body:has(.sticky.bg-mint) { --sim-banner-height: 27px; }
+.main-tab-banner {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+.main-tab-banner .meta { letter-spacing: 0; }
 
 .receipt-measure { font-size: 48px; }
 .share-card .receipt-measure { font-size: 38px; }

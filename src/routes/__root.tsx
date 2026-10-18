@@ -82,6 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#D1141A" },
       { title: "ToldYa — Call the next big artist" },
       { name: "description", content: "Call the next big artist before they blow up. Get the receipts." },
       { property: "og:type", content: "website" },

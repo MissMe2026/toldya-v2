@@ -133,7 +133,12 @@
 }
 body:has(.sticky.bg-mint) { --sim-banner-height: 27px; }
 
+.receipt-measure { font-size: 48px; }
+.share-card .receipt-measure { font-size: 38px; }
+.share-card .receipt-dimension .meta { font-size: 9px; }
+
 @media (prefers-reduced-motion: reduce) {
+  .animate-focus, .animate-flash { animation: none; }
   .discover-shell *, .discover-shell *::before, .discover-shell *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;

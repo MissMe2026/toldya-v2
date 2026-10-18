@@ -13,3 +13,5 @@
 - [x] Pin the current user's highlighted leaderboard row above the normal rankings.
 - [x] Restyle receipts, takeover, and share card using the spec-sheet system without changing data or interactions.
 - [x] Verify mobile layout, pinned stars, Fast-forward celebration and square PNG fonts/download.
+- [ ] Finish Profile and Leaderboard spec-sheet styling without changing data, controls or auras.
+- [ ] Verify phone overflow, tab clearance, badge states, Top 8 editing/reordering and ranking tabs.

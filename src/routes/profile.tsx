@@ -91,7 +91,7 @@ function ProfilePage() {
             {big.map((r, i) => (
               <li key={r.call.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 border-b py-3 text-ink">
                 <span className="min-w-0"><span className="meta mr-2">({i + 1})</span><span className="font-display font-extrabold">{r.artist.name}</span></span>
-                <span className="meta text-right text-[9px]">{fmt(r.call.listeners_at_call)} → {fmt(r.now)} · ×{fmtMult(r.mult).replace(/x$/, "")}</span>
+                <span className="meta text-right text-[10px]">{fmt(r.call.listeners_at_call)} → {fmt(r.now)} · ×{fmtMult(r.mult).replace(/x$/, "")}</span>
               </li>
             ))}
           </ol>
@@ -138,7 +138,7 @@ function ProfilePage() {
 function Stat({ k, v, mid }: { k: string; v: string; mid?: boolean }) {
   return (
     <div className={`min-w-0 py-3 ${mid ? "border-x px-3" : "px-2"}`}>
-      <dt className="meta text-[9px] font-bold text-ink">{k}</dt>
+      <dt className="meta text-[10px] font-bold text-ink">{k}</dt>
       <dd className="numeral mt-3 break-words text-[36px] text-ink">{v}</dd>
     </div>
   );

@@ -17,8 +17,8 @@ export const ShareCard = forwardRef<HTMLDivElement, { r: Receipt; handle: string
           <div className="display min-w-0 break-words text-[27px]">{r.artist.name}</div>
         </div>
         <div className="mt-4"><ReceiptDimension then={r.call.listeners_at_call} now={r.now} mult={r.mult} tone="inverse" /></div>
-        <div className="meta mt-3 text-[8px] leading-relaxed">Called at {r.call.listeners_at_call.toLocaleString()} listeners · {month}<br />Now {fmt(r.now)}</div>
-        <div className="meta mt-auto flex justify-between gap-2 border-t border-primary-foreground/50 pt-2 text-[8px]"><span>ToldYa®</span><span>artist-tally-keeper.lovable.app</span></div>
+        <div className="meta mt-3 text-[9px] leading-relaxed">Called at {r.call.listeners_at_call.toLocaleString()} listeners · {month}<br />Now {fmt(r.now)}</div>
+        <div className="meta mt-auto flex justify-between gap-2 border-t border-primary-foreground/50 pt-2 text-[9px]"><span>ToldYa®</span><span>artist-tally-keeper.lovable.app</span></div>
       </div>
     </div>
   );

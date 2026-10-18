@@ -2,7 +2,7 @@ export const DEMO_CALLS = [
   { name: "Ohmra", daysAgo: 59, big: true, callers: 12 },
   { name: "Rue Dahlia", daysAgo: 34, big: true, callers: 3 },
   { name: "Hollis Creek", daysAgo: 9, big: false, callers: 40 },
-  { name: "Static Bloom", daysAgo: 48, big: false, callers: 260 },
+  { name: "Static Bloom", daysAgo: 48, big: true, callers: 260 },
   { name: "Glass Coyote", daysAgo: 32, big: false, callers: 180 },
   { name: "The Lantern Kids", daysAgo: 4, big: false, callers: 110 },
 ];

@@ -53,7 +53,7 @@ function Leaderboard() {
       <TopBar n="(3) Ranking" right={myRank ? `You: #${myRank}` : undefined} />
       <div className="relative mt-8">
         <span aria-hidden className="numeral pointer-events-none absolute -top-8 right-0 text-[10rem] text-muted">{myRank || 1}</span>
-        <h1 className="display relative text-6xl text-signal">Best<br />ears.</h1>
+        <h1 className="display relative text-6xl text-ink">Best<br />ears.</h1>
       </div>
       <p className="mt-3 max-w-[16rem] text-xs">Ear Score rewards calling early (fewer listeners = more points) times how much they grew.</p>
       <div className="mt-6 flex gap-1 border-b pb-2">
@@ -77,7 +77,7 @@ function Leaderboard() {
       <ol className="mt-1">
         {rows.map((r, i) => (
           <li key={r.id} className={`flex items-center gap-3 border-b py-3 ${r.me ? "-mx-2 rounded-sm bg-mint px-2" : ""}`}>
-            <span className={`display w-10 text-2xl ${i < 3 ? "text-signal" : ""}`}>({i + 1})</span>
+            <span className={`display w-10 text-2xl ${i < 3 ? "text-ink" : ""}`}>({i + 1})</span>
             <div className="min-w-0 flex-1">
               <div className="font-display truncate text-lg font-extrabold tracking-tight">@{r.handle}{r.me && " · you"}</div>
               <div className="meta text-muted-foreground">{r.calls} calls · {r.hits} told ya</div>

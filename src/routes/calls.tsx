@@ -24,7 +24,7 @@ export const Route = createFileRoute("/calls")({
   component: Calls,
 });
 
-const CHIP = { Rising: "bg-mint text-ink", Flat: "bg-muted text-ink", Cooling: "bg-signal text-primary-foreground" } as const;
+const CHIP = { Rising: "bg-mint text-ink", Flat: "bg-muted text-ink", Cooling: "bg-ink text-primary-foreground" } as const;
 
 function Calls() {
   const { user, ready } = useAuth();
@@ -41,7 +41,7 @@ function Calls() {
     return [...list.filter((r) => r.call.is_big_call), ...list.filter((r) => !r.call.is_big_call)];
   }, [calls, artists, profile, sort]);
 
-  if (ready && !user) return <PageShell><TopBar n="(2) Receipts" /><h1 className="display mt-10 text-6xl text-signal">My<br />Calls.</h1><SignInCta what="see your receipts" /></PageShell>;
+  if (ready && !user) return <PageShell><TopBar n="(2) Receipts" /><h1 className="display mt-10 text-6xl text-ink">My<br />Calls.</h1><SignInCta what="see your receipts" /></PageShell>;
 
   const bigCount = calls.filter((c) => c.is_big_call).length;
   const toggleBig = async (id: string, on: boolean) => {
@@ -56,7 +56,7 @@ function Calls() {
       <TopBar n="(2) Receipts" right={`${calls.length} calls`} />
       <div className="relative mt-8">
         <span aria-hidden className="numeral pointer-events-none absolute -top-6 right-0 text-[9rem] text-muted">{calls.length}</span>
-        <h1 className="display relative text-6xl text-signal">Receipts.</h1>
+        <h1 className="display relative text-6xl text-ink">Receipts.</h1>
       </div>
       <div className="mt-6 flex items-center justify-between border-b pb-2">
         <div className="flex gap-1">
@@ -72,7 +72,7 @@ function Calls() {
         <div className="mt-8 rounded-md border bg-card p-5">
           <div className="display text-3xl">No calls yet.</div>
           <p className="mt-2 text-sm">Swipe right on an artist you believe in. We'll keep the receipt.</p>
-          <Link to="/" className="display mt-4 inline-block rounded-md bg-signal px-4 py-2.5 text-primary-foreground">Discover →</Link>
+          <Link to="/" className="display mt-4 inline-block rounded-md bg-ink px-4 py-2.5 text-primary-foreground">Discover →</Link>
         </div>
       )}
 
@@ -87,25 +87,25 @@ function Calls() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <h2 className="display truncate text-2xl">{r.artist.name}</h2>
-                    <button aria-label={r.call.is_big_call ? "Unstar big call" : "Star as big call"} onClick={() => toggleBig(r.call.id, r.call.is_big_call)} className={`text-xl leading-none ${r.call.is_big_call ? "text-signal" : "text-muted-foreground"}`}>
+                    <button aria-label={r.call.is_big_call ? "Unstar big call" : "Star as big call"} onClick={() => toggleBig(r.call.id, r.call.is_big_call)} className={`text-xl leading-none ${r.call.is_big_call ? "text-ink" : "text-muted-foreground"}`}>
                       {r.call.is_big_call ? "★" : "☆"}
                     </button>
                   </div>
                   <div className="meta mt-1 text-muted-foreground">{r.artist.genre} · {r.artist.city}</div>
                   <div className="mt-1 flex gap-1.5">
                     <span className={`meta rounded-sm px-1.5 py-0.5 ${CHIP[st]}`}>{st}</span>
-                    {ty && <span className="meta rounded-sm bg-signal px-1.5 py-0.5 text-primary-foreground">TOLD YA ©</span>}
+                    {ty && <span className="meta rounded-sm bg-ink px-1.5 py-0.5 text-primary-foreground">TOLD YA ©</span>}
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-3 border-t border-dashed">
                 <div className="p-3"><div className="meta text-muted-foreground">Then</div><div className="numeral mt-1 text-3xl">{fmt(r.call.listeners_at_call)}</div></div>
                 <div className="border-x border-dashed p-3"><div className="meta text-muted-foreground">Now</div><div className="numeral mt-1 text-3xl">{fmt(r.now)}</div></div>
-                <div className="p-3"><div className="meta text-muted-foreground">Growth</div><div className={`numeral mt-1 text-3xl ${r.mult >= 1 ? "text-signal" : ""}`}>{fmtMult(r.mult)}</div></div>
+                <div className="p-3"><div className="meta text-muted-foreground">Growth</div><div className={`numeral mt-1 text-3xl ${r.mult >= 1 ? "text-ink" : ""}`}>{fmtMult(r.mult)}</div></div>
               </div>
               <div className="flex items-center justify-between border-t bg-paper px-3 py-2 meta text-muted-foreground">
                 <span>Called at {r.call.listeners_at_call.toLocaleString()} · {stampDate(new Date(r.call.called_at))}</span>
-                {ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="text-signal underline">Share</Link>}
+                {ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="text-ink underline">Share</Link>}
               </div>
             </li>
           );

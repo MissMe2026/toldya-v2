@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
 import { earScore, isToldYa, receipts } from "@/lib/toldya";
+import { BOARD_GENRES, currentGenreRow, genreTopThree, seededGenreRows, topTen, type BoardRow } from "@/lib/genre-board";
 
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
@@ -50,6 +51,17 @@ function Leaderboard() {
   const myRank = rows.findIndex((r) => r.me) + 1;
   const myRow = rows.find((r) => r.me);
 
+  const genreBoards = useMemo(() => {
+    const seeded = board.map(b => seededGenreRows(b, tab));
+    const rs = profile ? receipts(calls, artists, profile.sim_months) : [];
+    const now = Date.now();
+    return BOARD_GENRES.map(genre => {
+      const list = seeded.map(spread => spread[genre]);
+      if (user && profile) list.push(currentGenreRow(user.id, profile.handle, rs, genre, tab, now));
+      return { genre, rows: genreTopThree(list) };
+    });
+  }, [board, tab, user, profile, calls, artists]);
+
   return (
     <PageShell>
       <TopBar n="(3) Ranking" right={myRank ? <span className="opacity-90">{`You: #${myRank}`}</span> : undefined} />
@@ -73,19 +85,32 @@ function Leaderboard() {
           <span className="meta shrink-0 text-sm">{myRow.score.toLocaleString()}</span>
         </div>
       )}
-      <ol className="mt-1">
-        {rows.map((r, i) => (
-          <li key={r.id} className="flex items-center gap-3 border-b py-3 text-ink">
-            <span className="numeral w-10 shrink-0 text-[36px]">{i + 1}</span>
-            <UserAvatar handle={r.handle} />
-            <div className="min-w-0 flex-1">
-              <div className="font-display truncate text-lg font-extrabold">@{r.handle}{r.me && " · you"}</div>
-              <div className="meta text-muted-foreground">{r.calls} calls · {r.hits} told ya</div>
-            </div>
-            <span className="meta shrink-0 text-xs">{r.score.toLocaleString()}</span>
-          </li>
-        ))}
-      </ol>
+      <RankingRows rows={topTen(rows)} label="Top 10 ears" />
+      {genreBoards.map(({ genre, rows: genreRows }) => (
+        <section key={genre} className="mt-8" aria-label={`${genre} board`}>
+          <h2 className="display border-b pb-3 text-[40px] text-ink">best {genre} ears.</h2>
+          <RankingRows rows={genreRows} label={`Top ${genre} ears`} />
+        </section>
+      ))}
+      <p className="meta mt-8 text-muted-foreground">Scores = Ear Score from calls in that genre · Demo data</p>
     </PageShell>
+  );
+}
+
+function RankingRows({ rows, label }: { rows: BoardRow[]; label: string }) {
+  return (
+    <ol className="mt-1" aria-label={label}>
+      {rows.map((r, i) => (
+        <li key={r.id} className="flex items-center gap-3 border-b py-3 text-ink">
+          <span className="numeral w-10 shrink-0 text-[36px]">{i + 1}</span>
+          <UserAvatar handle={r.handle} />
+          <div className="min-w-0 flex-1">
+            <div className="font-display truncate text-lg font-extrabold">@{r.handle}{r.me && " · you"}</div>
+            <div className="meta text-muted-foreground">{r.calls} calls · {r.hits} told ya</div>
+          </div>
+          <span className="meta shrink-0 text-xs">{r.score.toLocaleString()}</span>
+        </li>
+      ))}
+    </ol>
   );
 }

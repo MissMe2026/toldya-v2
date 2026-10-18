@@ -23,5 +23,6 @@
 - Main-tab TopBar owns its embedded simulation strip in one sticky full-bleed header; PageShell reserves its intrinsic height so Discover and scrolling tabs share safe-area behavior without duplicate strips.
 - Aura palette, focus stages and mosaic geometry live in a pure helper; earned receipt status explicitly supplies fame so general artist views remain independent of calls.
 - UserAvatar shares handle-derived userAuraMix across Profile and Board and disables Aura's lens edge so user identities stay consistent and entirely cool.
+- Genre rankings use a browser-safe pure helper to partition existing fictional board totals deterministically and score user receipts per genre and selected period; shared rows keep ranking layouts consistent.
 - Receipt cards and social images share ReceiptDimension for listener measurements; PNG export waits for loaded fonts and embeds them at a square social resolution so downloaded receipts match the on-screen typography.
 - BadgeStamp renders derived badge state as perforated stamps; Profile retains its existing Top 8 persistence and ordering handlers while using neutral editable tiles.

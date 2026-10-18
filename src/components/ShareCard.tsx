@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import { Aura } from "./Aura";
-import { fmt, fmtMult, type Receipt } from "@/lib/toldya";
+import { fmt, fmtMult, isToldYa, type Receipt } from "@/lib/toldya";
 
 export const ShareCard = forwardRef<HTMLDivElement, { r: Receipt; handle: string }>(function ShareCard({ r, handle }, ref) {
   const d = new Date(r.call.called_at);
@@ -8,7 +8,7 @@ export const ShareCard = forwardRef<HTMLDivElement, { r: Receipt; handle: string
   return (
     <div ref={ref} className="relative aspect-square w-full overflow-hidden bg-signal text-primary-foreground">
       <div className="absolute right-[-12%] top-[8%] h-[62%] w-[62%] overflow-hidden rounded-full">
-        <Aura mix={r.artist.aura_mix} listeners={100000} />
+        <Aura mix={r.artist.aura_mix} listeners={r.now} famous={isToldYa(r)} />
       </div>
       <div className="absolute inset-0 flex flex-col p-[5%]">
         <div className="flex justify-between meta"><span>Issue No. {d.getFullYear()}</span><span>@{handle}</span></div>

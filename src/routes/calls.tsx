@@ -83,7 +83,7 @@ function Calls() {
           return (
             <li key={r.call.id} className="relative overflow-hidden rounded-md border bg-card">
               <div className="flex gap-3 p-3">
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full"><Aura mix={r.artist.aura_mix} listeners={r.now} /></div>
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full"><Aura mix={r.artist.aura_mix} listeners={r.now} famous={ty} /></div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <h2 className="display truncate text-2xl">{r.artist.name}</h2>

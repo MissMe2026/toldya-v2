@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { Aura } from "./Aura";
-import { fmt, fmtMult, type Receipt } from "@/lib/toldya";
+import { fmt, fmtMult, isToldYa, type Receipt } from "@/lib/toldya";
 
 export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void }) {
   const [n, setN] = useState(1);
-  const [sharp, setSharp] = useState(false);
   useEffect(() => {
     navigator.vibrate?.([40, 30, 80]);
     const t0 = performance.now();
@@ -17,8 +16,7 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    const s = setTimeout(() => setSharp(true), 150);
-    return () => { cancelAnimationFrame(raf); clearTimeout(s); };
+    return () => { cancelAnimationFrame(raf); };
   }, [r.mult]);
 
   return createPortal(
@@ -27,7 +25,7 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
       <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-6 pt-6">
         <div className="flex justify-between meta"><span>ToldYa® · Badge earned</span><span>No. 01</span></div>
         <div className="relative mx-auto mt-6 aspect-square w-60 overflow-hidden rounded-full">
-          <Aura mix={r.artist.aura_mix} listeners={sharp ? 100000 : 300} />
+          <Aura mix={r.artist.aura_mix} listeners={r.now} famous={isToldYa(r)} />
         </div>
         <h2 className="display mt-6 text-[22vw] leading-[0.8] sm:text-8xl">TOLD<br />YA.</h2>
         <div className="mt-4 flex items-end justify-between">

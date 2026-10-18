@@ -49,6 +49,7 @@
   --mint: oklch(0.86 0.08 158);
   --teal: oklch(0.76 0.13 175);
   --deep-teal: oklch(0.59 0.1 190);
+  --aura-grey: oklch(0.88 0 0);
 
   --background: var(--paper);
   --foreground: var(--ink);

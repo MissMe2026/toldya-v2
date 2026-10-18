@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { Aura } from "./Aura";
+import { Button } from "@/components/ui/button";
 import { fmt, fmtMult, isToldYa, type Receipt } from "@/lib/toldya";
 
 export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void }) {
   const [n, setN] = useState(1);
   useEffect(() => {
     navigator.vibrate?.([40, 30, 80]);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setN(r.mult); return; }
     const t0 = performance.now();
     let raf = 0;
     const tick = (t: number) => {
@@ -22,24 +24,20 @@ export function ToldYaTakeover({ r, onClose }: { r: Receipt; onClose: () => void
   return createPortal(
     <div role="dialog" aria-modal="true" aria-label="Told ya" className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-signal text-primary-foreground">
       <div className="animate-flash absolute inset-0 bg-card" />
-      <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-6 pt-6">
+      <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-5 pb-[calc(80px_+_env(safe-area-inset-bottom))] pt-[calc(24px_+_env(safe-area-inset-top))]">
         <div className="flex justify-between meta"><span>ToldYa® · Badge earned</span><span>No. 01</span></div>
-        <div className="relative mx-auto mt-6 aspect-square w-60 overflow-hidden rounded-full">
+        <h2 className="display mt-8 text-[86px]">told ya.</h2>
+        <div className="animate-focus relative mx-auto mt-5 aspect-square w-[170px] shrink-0 overflow-hidden rounded-full">
           <Aura mix={r.artist.aura_mix} listeners={r.now} famous={isToldYa(r)} />
         </div>
-        <h2 className="display mt-6 text-[22vw] leading-[0.8] sm:text-8xl">TOLD<br />YA.</h2>
-        <div className="mt-4 flex items-end justify-between">
-          <div className="display text-2xl">{r.artist.name}</div>
-          <div className="numeral text-7xl">{fmtMult(n)}</div>
-        </div>
+        <div className="display mt-5 break-words text-[32px]">{r.artist.name}</div>
+        <div className="numeral mt-5 text-[96px]">×{fmtMult(n).replace(/x$/, "")}</div>
         <div className="meta mt-3 border-t border-primary-foreground/40 pt-2">
-          Called at {r.call.listeners_at_call.toLocaleString()} · Now {fmt(r.now)} · {fmtMult(r.mult)}
+          Called at {r.call.listeners_at_call.toLocaleString()} · Now {fmt(r.now)} · ×{fmtMult(r.mult).replace(/x$/, "")}
         </div>
         <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
-          <button onClick={onClose} className="display rounded-md border border-primary-foreground py-3 text-lg">Nice.</button>
-          <Link to="/r/$callId" params={{ callId: r.call.id }} className="display rounded-md bg-card py-3 text-center text-lg text-signal">
-            Share it →
-          </Link>
+          <Button variant="outline" onClick={onClose} className="border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">Nice.</Button>
+          <Button asChild className="bg-card text-signal hover:bg-card/90"><Link to="/r/$callId" params={{ callId: r.call.id }}>Share it →</Link></Button>
         </div>
       </div>
     </div>,

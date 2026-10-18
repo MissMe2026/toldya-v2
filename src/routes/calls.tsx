@@ -4,11 +4,12 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Aura } from "@/components/Aura";
+import { ReceiptDimension } from "@/components/ReceiptDimension";
 import { FastForward } from "@/components/FastForward";
 import { Button } from "@/components/ui/button";
 import { PageShell, SignInCta, TopBar } from "@/components/TabBar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
-import { fmt, fmtMult, isToldYa, receipts, stampDate, status } from "@/lib/toldya";
+import { isToldYa, receipts, status } from "@/lib/toldya";
 
 export const Route = createFileRoute("/calls")({
   head: () => ({
@@ -23,8 +24,6 @@ export const Route = createFileRoute("/calls")({
   }),
   component: Calls,
 });
-
-const CHIP = { Rising: "bg-mint text-ink", Flat: "bg-muted text-ink", Cooling: "bg-ink text-primary-foreground" } as const;
 
 function Calls() {
   const { user, ready } = useAuth();
@@ -41,7 +40,7 @@ function Calls() {
     return [...list.filter((r) => r.call.is_big_call), ...list.filter((r) => !r.call.is_big_call)];
   }, [calls, artists, profile, sort]);
 
-  if (ready && !user) return <PageShell><TopBar n="(2) Receipts" /><h1 className="display mt-10 text-6xl text-ink">My<br />Calls.</h1><SignInCta what="see your receipts" /></PageShell>;
+  if (ready && !user) return <PageShell><TopBar n="(2) Receipts" /><h1 className="display mt-8 text-[72px] text-ink">receipts.</h1><SignInCta what="see your receipts" /></PageShell>;
 
   const bigCount = calls.filter((c) => c.is_big_call).length;
   const toggleBig = async (id: string, on: boolean) => {
@@ -54,14 +53,11 @@ function Calls() {
   return (
     <PageShell>
       <TopBar n="(2) Receipts" right={`${calls.length} calls`} />
-      <div className="relative mt-8">
-        <span aria-hidden className="numeral pointer-events-none absolute -top-6 right-0 text-[9rem] text-muted">{calls.length}</span>
-        <h1 className="display relative text-6xl text-ink">Receipts.</h1>
-      </div>
+      <h1 className="display mt-8 text-[72px] text-ink">receipts.</h1>
       <div className="mt-6 flex items-center justify-between border-b pb-2">
         <div className="flex gap-1">
           {(["date", "growth"] as const).map((s) => (
-            <button key={s} onClick={() => setSort(s)} className={`meta rounded-sm px-2.5 py-1.5 ${sort === s ? "bg-ink text-primary-foreground" : ""}`}>By {s}</button>
+            <Button variant="ghost" key={s} onClick={() => setSort(s)} aria-pressed={sort === s} className={`meta h-9 rounded-none px-2.5 py-1.5 ${sort === s ? "text-ink underline underline-offset-4" : "text-muted-foreground"}`}>By {s}</Button>
           ))}
         </div>
         <span className="meta text-muted-foreground">★ {bigCount}/3 big calls</span>
@@ -72,40 +68,35 @@ function Calls() {
         <div className="mt-8 rounded-md border bg-card p-5">
           <div className="display text-3xl">No calls yet.</div>
           <p className="mt-2 text-sm">Swipe right on an artist you believe in. We'll keep the receipt.</p>
-          <Link to="/" className="display mt-4 inline-block rounded-md bg-ink px-4 py-2.5 text-primary-foreground">Discover →</Link>
+          <Button asChild className="mt-4"><Link to="/">Discover →</Link></Button>
         </div>
       )}
 
-      <ul className="mt-4 space-y-3 pb-[calc(48px_+_env(safe-area-inset-bottom))]">
+      <ul className="mt-4 space-y-4 pb-[calc(64px_+_env(safe-area-inset-bottom))]">
         {rs.map((r) => {
           const st = status(r.mult);
           const ty = isToldYa(r);
           return (
-            <li key={r.call.id} className="relative overflow-hidden rounded-md border bg-card">
-              <div className="flex gap-3 p-3">
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full"><Aura mix={r.artist.aura_mix} listeners={r.now} famous={ty} /></div>
+            <li key={r.call.id} className="receipt-card relative overflow-hidden rounded-[4px] border border-ink/18 bg-card text-ink">
+              <div className="flex items-start justify-between gap-2 px-3 pt-3 meta text-[9px]">
+                <span>Receipt No. {r.call.id.slice(0, 6)}</span>
+                <time dateTime={r.call.called_at}>{new Date(r.call.called_at).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })}</time>
+              </div>
+              <div className="flex items-center gap-2 px-3 pb-2 pt-4">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden"><Aura mix={r.artist.aura_mix} listeners={r.now} famous={ty} /></div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="display truncate text-2xl">{r.artist.name}</h2>
-                    <button aria-label={r.call.is_big_call ? "Unstar big call" : "Star as big call"} onClick={() => toggleBig(r.call.id, r.call.is_big_call)} className={`text-xl leading-none ${r.call.is_big_call ? "text-ink" : "text-muted-foreground"}`}>
+                    <h2 className="display self-center break-words text-[28px]">{r.artist.name}</h2>
+                    <Button variant="ghost" size="icon" aria-label={r.call.is_big_call ? "Unstar big call" : "Star as big call"} aria-pressed={r.call.is_big_call} onClick={() => toggleBig(r.call.id, r.call.is_big_call)} className="h-9 w-9 shrink-0 text-xl leading-none text-ink">
                       {r.call.is_big_call ? "★" : "☆"}
-                    </button>
-                  </div>
-                  <div className="meta mt-1 text-muted-foreground">{r.artist.genre} · {r.artist.city}</div>
-                  <div className="mt-1 flex gap-1.5">
-                    <span className={`meta rounded-sm px-1.5 py-0.5 ${CHIP[st]}`}>{st}</span>
-                    {ty && <span className="meta rounded-sm bg-ink px-1.5 py-0.5 text-primary-foreground">TOLD YA ©</span>}
+                    </Button>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 border-t border-dashed">
-                <div className="p-3"><div className="meta text-muted-foreground">Then</div><div className="numeral mt-1 text-3xl">{fmt(r.call.listeners_at_call)}</div></div>
-                <div className="border-x border-dashed p-3"><div className="meta text-muted-foreground">Now</div><div className="numeral mt-1 text-3xl">{fmt(r.now)}</div></div>
-                <div className="p-3"><div className="meta text-muted-foreground">Growth</div><div className={`numeral mt-1 text-3xl ${r.mult >= 1 ? "text-ink" : ""}`}>{fmtMult(r.mult)}</div></div>
-              </div>
-              <div className="flex items-center justify-between border-t bg-paper px-3 py-2 meta text-muted-foreground">
-                <span>Called at {r.call.listeners_at_call.toLocaleString()} · {stampDate(new Date(r.call.called_at))}</span>
-                {ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="text-ink underline">Share</Link>}
+              <div className="px-3 pb-5 pt-3"><ReceiptDimension then={r.call.listeners_at_call} now={r.now} mult={r.mult} tone={st === "Rising" || ty ? "rising" : "neutral"} /></div>
+              <div className="grid grid-cols-4 gap-2 border-t border-ink/18 px-3 py-3">
+                {[["1 Genre", r.artist.genre], ["2 City", r.artist.city], ["3 Called at", r.call.listeners_at_call.toLocaleString()]].map(([label, value]) => <div key={label} className="min-w-0"><div className="meta text-[9px] font-bold">{label}</div><div className="mt-1 break-words text-[10px] leading-tight">{value}</div></div>)}
+                <div className="min-w-0"><div className="meta text-[9px] font-bold">4 Status</div><div className="meta mt-1 flex items-center gap-1 text-[9px] leading-tight">{!ty && st === "Rising" && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-mint" />}{ty ? "TOLD YA ©" : st}</div>{ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="meta mt-1 inline-block text-[9px] text-ink underline">Share →</Link>}</div>
               </div>
             </li>
           );

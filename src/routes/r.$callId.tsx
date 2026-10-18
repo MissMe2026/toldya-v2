@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { toPng } from "html-to-image";
+import { getFontEmbedCSS, toPng } from "html-to-image";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareCard } from "@/components/ShareCard";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { receipts, type Artist, type Call, type Top8Item } from "@/lib/toldya";
 
@@ -37,7 +38,8 @@ function SharePage() {
         supabase.from("profiles").select("handle,sim_months,top8").eq("id", call.user_id).maybeSingle(),
       ]);
       if (!artist) return null;
-      const r = receipts([call as Call], [artist as unknown as Artist], prof?.sim_months ?? 0)[0]!;
+      const r = receipts([call as Call], [artist as unknown as Artist], prof?.sim_months ?? 0)[0];
+      if (!r) return null;
       return { r, handle: prof?.handle ?? "listener", top8: (prof?.top8 ?? []) as unknown as Top8Item[] };
     },
   });
@@ -46,7 +48,11 @@ function SharePage() {
     if (!ref.current) return;
     setBusy(true);
     try {
-      const url = await toPng(ref.current, { pixelRatio: 3, cacheBust: true });
+      await document.fonts.ready;
+      const node = ref.current;
+      if (!node) return;
+      const fontEmbedCSS = await getFontEmbedCSS(node, { preferredFontFormat: "woff2" });
+      const url = await toPng(node, { pixelRatio: 1080 / node.offsetWidth, fontEmbedCSS });
       const a = document.createElement("a");
       a.href = url; a.download = `toldya-${data?.r.artist.name.replace(/\s+/g, "-").toLowerCase()}.png`; a.click();
     } catch { toast.error("Couldn't make the image. Try again."); } finally { setBusy(false); }
@@ -69,8 +75,8 @@ function SharePage() {
         <>
           <div className="mt-5 overflow-hidden rounded-md"><ShareCard ref={ref} r={data.r} handle={data.handle} /></div>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <button onClick={download} disabled={busy} className="display rounded-md bg-ink py-3.5 text-lg text-primary-foreground disabled:opacity-60">{busy ? "…" : "Download image"}</button>
-            <button onClick={copy} className="display rounded-md border border-ink bg-card py-3.5 text-lg">Copy link</button>
+            <Button onClick={download} disabled={busy}>{busy ? "…" : "Download image"}</Button>
+            <Button variant="outline" onClick={copy}>Copy link</Button>
           </div>
           {data.top8.length > 0 && (
             <section className="mt-8">
@@ -83,9 +89,9 @@ function SharePage() {
             </section>
           )}
           {!user && (
-            <div className="mt-8 rounded-md bg-signal p-5 text-primary-foreground">
+            <div className="mt-8 border-y py-5 text-ink">
               <div className="display text-3xl">Think you've got better ears?</div>
-              <Link to="/auth" className="display mt-4 inline-block rounded-md bg-card px-4 py-2.5 text-signal">Start calling →</Link>
+              <Button asChild className="mt-4"><Link to="/auth">Start calling →</Link></Button>
             </div>
           )}
         </>

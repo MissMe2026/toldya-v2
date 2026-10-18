@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Aura } from "@/components/Aura";
+import { UserAvatar } from "@/components/UserAvatar";
 import { FastForward } from "@/components/FastForward";
 import { BadgeStamp } from "@/components/BadgeStamp";
 import { Button } from "@/components/ui/button";
@@ -58,9 +58,7 @@ function ProfilePage() {
       <TopBar n="(4) You" right={<Button variant="ghost" onClick={signOut} className="meta h-8 px-0 font-mono text-[10px] text-primary-foreground opacity-90 underline hover:bg-transparent hover:text-primary-foreground">Sign out</Button>} />
 
       <header className="mt-6 flex items-center gap-3">
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
-          <Aura mix={{ core: "ink", mid: "red", halo: "teal", shape: "orb", angle: profile.handle.length * 37 }} listeners={20000} />
-        </div>
+        <UserAvatar handle={profile.handle} className="h-12 w-12" />
         <div className="min-w-0">
           <h1 className="display break-all text-[38px] text-ink">@{profile.handle}</h1>
         </div>

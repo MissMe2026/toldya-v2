@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell, TopBar } from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
 import { earScore, isToldYa, receipts } from "@/lib/toldya";
 
@@ -62,7 +63,8 @@ function Leaderboard() {
       </div>
       {isLoading && <p className="meta mt-6 text-muted-foreground">Counting ears…</p>}
       {myRow && !isLoading && (
-        <div aria-label="Your pinned ranking" className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-[4px] bg-signal p-3 text-primary-foreground">
+        <div aria-label="Your pinned ranking" className="mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-[4px] bg-signal p-3 text-primary-foreground">
+          <UserAvatar handle={myRow.handle} pinned />
           <div className="min-w-0">
             <div className="meta">You · #{myRank}</div>
             <div className="truncate font-display text-lg font-extrabold">@{myRow.handle}</div>
@@ -75,6 +77,7 @@ function Leaderboard() {
         {rows.map((r, i) => (
           <li key={r.id} className="flex items-center gap-3 border-b py-3 text-ink">
             <span className="numeral w-10 shrink-0 text-[36px]">{i + 1}</span>
+            <UserAvatar handle={r.handle} />
             <div className="min-w-0 flex-1">
               <div className="font-display truncate text-lg font-extrabold">@{r.handle}{r.me && " · you"}</div>
               <div className="meta text-muted-foreground">{r.calls} calls · {r.hits} told ya</div>

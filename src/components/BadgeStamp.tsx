@@ -5,7 +5,7 @@ export function BadgeStamp({ badge }: { badge: { no: string; name: string; desc:
       <div aria-hidden="true" className={`my-3 flex h-8 w-12 items-center justify-center ${badge.earned ? "bg-ink text-primary-foreground" : "border border-muted-foreground"}`}><span className="text-xl">{badge.earned ? "★" : "☆"}</span></div>
       <div className="display break-words text-[22px] leading-[0.95] uppercase">{badge.name}{badge.count > 1 ? ` ×${badge.count}` : ""}</div>
       <p className="mt-2 text-[11px] leading-snug">{badge.desc}</p>
-      <div className="meta mt-auto border-t pt-3 text-[9px]">ToldYa® 2026</div>
+      <div className="meta mt-auto border-t pt-3 text-[10px]">ToldYa® 2026</div>
     </div>
   );
 }

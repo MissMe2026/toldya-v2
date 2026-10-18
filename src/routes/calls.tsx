@@ -78,7 +78,7 @@ function Calls() {
           const ty = isToldYa(r);
           return (
             <li key={r.call.id} className="receipt-card relative overflow-hidden rounded-[4px] border border-ink/18 bg-card text-ink">
-              <div className="flex items-start justify-between gap-2 px-3 pt-3 meta text-[9px]">
+              <div className="flex items-start justify-between gap-2 px-3 pt-3 meta text-[10px]">
                 <span>Receipt No. {r.call.id.slice(0, 6)}</span>
                 <time dateTime={r.call.called_at}>{new Date(r.call.called_at).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })}</time>
               </div>
@@ -95,8 +95,8 @@ function Calls() {
               </div>
               <div className="px-3 pb-5 pt-3"><ReceiptDimension then={r.call.listeners_at_call} now={r.now} mult={r.mult} tone={st === "Rising" || ty ? "rising" : "neutral"} /></div>
               <div className="grid grid-cols-4 gap-2 border-t border-ink/18 px-3 py-3">
-                {[["1 Genre", r.artist.genre], ["2 City", r.artist.city], ["3 Called at", r.call.listeners_at_call.toLocaleString()]].map(([label, value]) => <div key={label} className="min-w-0"><div className="meta text-[9px] font-bold">{label}</div><div className="mt-1 break-words text-[10px] leading-tight">{value}</div></div>)}
-                <div className="min-w-0"><div className="meta text-[9px] font-bold">4 Status</div><div className="meta mt-1 flex items-center gap-1 text-[9px] leading-tight">{!ty && st === "Rising" && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-mint" />}{ty ? "TOLD YA ©" : st}</div>{ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="meta mt-1 inline-block text-[9px] text-ink underline">Share →</Link>}</div>
+                {[["1 Genre", r.artist.genre], ["2 City", r.artist.city], ["3 Called at", r.call.listeners_at_call.toLocaleString()]].map(([label, value]) => <div key={label} className="min-w-0"><div className="meta text-[10px] font-bold">{label}</div><div className="mt-1 break-words text-[10px] leading-tight">{value}</div></div>)}
+                <div className="min-w-0"><div className="meta text-[10px] font-bold">4 Status</div><div className="meta mt-1 flex items-center gap-1 text-[9px] leading-tight">{!ty && st === "Rising" && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-mint" />}{ty ? "TOLD YA ©" : st}</div>{ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="meta mt-1 inline-block text-[9px] text-ink underline">Share →</Link>}</div>
               </div>
             </li>
           );

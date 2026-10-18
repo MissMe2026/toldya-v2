@@ -11,3 +11,5 @@
 - [x] Verify mobile signed-out and demo call flows, metadata, and badge clearance.
 - [x] Create a fresh demo account per tap with historical listener snapshots and test growth outcomes.
 - [x] Pin the current user's highlighted leaderboard row above the normal rankings.
+- [ ] Restyle receipts, takeover, and share card using the spec-sheet system without changing data or interactions.
+- [ ] Verify mobile layout, pinned stars, Fast-forward celebration and square PNG fonts/download.

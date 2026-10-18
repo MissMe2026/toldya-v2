@@ -1,4 +1,6 @@
 # Discover phone update
+- [ ] Replace all wordmarks with Wallis's exact SVG and update the favicon.
+- [ ] Verify phone headers and downloaded share PNG with the new logo.
 - [x] Apply the spec-sheet brand, shared Logo and neutral tabs without changing data or functionality.
 - [x] Restyle Discover and move existing filters into a sheet; preserve pending-call and demo flows.
 - [x] Verify tests and no-scroll phone layout, filters, and call flow.

@@ -137,6 +137,11 @@ body:has(.sticky.bg-mint) { --sim-banner-height: 27px; }
 .share-card .receipt-measure { font-size: 38px; }
 .share-card .receipt-dimension .meta { font-size: 9px; }
 
+.badge-stamp {
+  mask: radial-gradient(circle at 4px 4px, transparent 3px, var(--ink) 3.5px) -4px -4px / 8px 8px,
+    linear-gradient(var(--ink) 0 0) center / calc(100% - 8px) calc(100% - 8px) no-repeat;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-focus, .animate-flash { animation: none; }
   .discover-shell *, .discover-shell *::before, .discover-shell *::after {

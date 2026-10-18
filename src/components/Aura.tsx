@@ -9,7 +9,7 @@ export function blurFor(listeners: number) {
   return 3;
 }
 
-export function Aura({ mix, listeners, famous = false }: { mix: AuraMix; listeners: number; famous?: boolean }) {
+export function Aura({ mix, listeners, famous = false, lensEdge = true }: { mix: AuraMix; listeners: number; famous?: boolean; lensEdge?: boolean }) {
   const id = useId().replace(/:/g, "");
   const config = auraStyle(mix, listeners, famous);
   const [core, mid, halo] = config.colors;
@@ -31,7 +31,7 @@ export function Aura({ mix, listeners, famous = false }: { mix: AuraMix; listene
           <filter id={`${id}-edge`} x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3" /></filter>
         </defs>
         <g transform={`rotate(${config.angle} 120 120)`}>
-          {!famous && <g transform="translate(6 0)" opacity="0.2" filter={`url(#${id}-edge)`}>{shape("var(--signal)")}</g>}
+          {!famous && lensEdge && <g transform="translate(6 0)" opacity="0.2" filter={`url(#${id}-edge)`}>{shape("var(--signal)")}</g>}
           {config.mosaic ? <g shapeRendering="crispEdges">{mosaicCells(mix).map(c => <rect key={`${c.x}-${c.y}`} x={c.x} y={c.y} width="16" height="16" fill={c.color} opacity={c.opacity} />)}</g> :
             <g filter={`url(#${id}-blur)`}>{shape(`url(#${id}-color)`)}</g>}
         </g>

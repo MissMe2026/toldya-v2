@@ -1,5 +1,12 @@
 import type { AuraMix } from "./toldya";
 
+export function userAuraMix(handle: string): AuraMix {
+  const codes = Array.from(handle, (char) => char.codePointAt(0) ?? 0);
+  const sum = codes.reduce((total, code) => total + code, 0);
+  const variation = codes.reduce((total, code, index) => total + code * (index + 1), 0);
+  return { core: "ink", mid: variation % 2 === 0 ? "teal" : "deep-teal", halo: "mint", shape: "orb", angle: (sum * 37) % 360 };
+}
+
 const COOL: Record<string, string> = {
   ink: "var(--ink)", oxblood: "var(--ink)", red: "var(--deep-teal)",
   "deep-teal": "var(--deep-teal)", teal: "var(--teal)", mint: "var(--mint)",

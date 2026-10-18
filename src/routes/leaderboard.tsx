@@ -51,7 +51,7 @@ function Leaderboard() {
 
   return (
     <PageShell>
-      <TopBar n="(3) Ranking" right={myRank ? `You: #${myRank}` : undefined} />
+      <TopBar n="(3) Ranking" right={myRank ? <span className="opacity-90">{`You: #${myRank}`}</span> : undefined} />
       <h1 className="display mt-8 text-[64px] text-ink">best ears.</h1>
       <div className="mt-6 flex gap-1 border-b pb-2">
         {(["week", "all"] as const).map((t) => (

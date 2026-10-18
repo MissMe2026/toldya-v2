@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { updateProfile, useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
@@ -57,12 +58,14 @@ export function FastForward({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function SimBanner() {
+export function SimBanner({ embedded = false }: { embedded?: boolean }) {
   const { data: profile } = useProfile();
+  const { pathname } = useLocation();
+  if (!embedded && ["/", "/calls", "/leaderboard", "/profile"].includes(pathname)) return null;
   if (!profile?.sim_months) return null;
   const m = profile.sim_months;
   return (
-    <div className="sticky top-0 z-40 bg-mint py-1.5 text-center meta text-ink">
+    <div className={`${embedded ? "" : "sticky top-0 z-40"} sim-banner bg-mint py-1.5 text-center meta text-ink`}>
       ● Simulated: +{m >= 12 && m % 12 === 0 ? `${m / 12} year${m > 12 ? "s" : ""}` : `${m} months`} · demo time
     </div>
   );

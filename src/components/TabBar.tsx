@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
+import { SimBanner } from "@/components/FastForward";
 
 const tabs = [
   { to: "/", label: "Discover", n: "(1)" },
@@ -34,10 +35,22 @@ export function TabBar() {
 }
 
 export function PageShell({ children, fitScreen = false }: { children: ReactNode; fitScreen?: boolean }) {
-  return <div className={fitScreen ? "discover-shell mx-auto flex max-w-md flex-col overflow-hidden px-4 pt-5" : "mx-auto min-h-screen max-w-md px-4 pb-28 pt-5"}>{children}</div>;
+  const { pathname } = useLocation();
+  const mainTab = tabs.some((tab) => tab.to === pathname);
+  return <div className={fitScreen ? "discover-shell mx-auto flex max-w-md flex-col px-4" : `mx-auto min-h-screen max-w-md px-4 pb-28 ${mainTab ? "" : "pt-5"}`}>{children}</div>;
 }
 
 export function TopBar({ n, right }: { n: string; right?: ReactNode }) {
+  const { pathname } = useLocation();
+  if (tabs.some((tab) => tab.to === pathname)) return (
+    <header className="main-tab-banner sticky top-0 z-40 shrink-0 bg-signal pt-[env(safe-area-inset-top)] text-primary-foreground">
+      <SimBanner embedded />
+      <div className="mx-auto flex h-16 max-w-md items-center justify-between gap-2 px-4">
+        <Logo className="text-primary-foreground" />
+        <div className="flex min-w-0 items-center gap-2 meta text-primary-foreground">{right ?? <span className="opacity-90">{n}</span>}</div>
+      </div>
+    </header>
+  );
   return (
     <div className="flex items-center justify-between">
       <Logo />

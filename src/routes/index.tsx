@@ -3,9 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Logo } from "@/components/Logo";
 import { Aura } from "@/components/Aura";
-import { PageShell } from "@/components/TabBar";
+import { PageShell, TopBar } from "@/components/TabBar";
 import { useArtists, useAuth, useMyCalls, useProfile } from "@/hooks/useAuth";
 import { fmt, hype, niceDate, stampDate as stamp } from "@/lib/toldya";
 import { tasteProfile } from "@/lib/providers";
@@ -118,13 +117,7 @@ function Discover() {
 
   return (
     <PageShell fitScreen>
-      <header className="flex shrink-0 items-center justify-between gap-2">
-        <Logo />
-        <div className="flex items-center gap-2">
-          <span className="meta text-muted-foreground">{calls} calls · {deck.length} left</span>
-          <Button variant="outline" onClick={() => setFilterSheet(true)} className="h-11 rounded-[6px] px-2.5 font-mono text-[10px] uppercase" aria-label="Filter">Filter</Button>
-        </div>
-      </header>
+      <TopBar n="(1) Discover" right={<><span className="whitespace-nowrap text-primary-foreground opacity-90">{`${calls} calls · ${deck.length} left`}</span><Button variant="outline" onClick={() => setFilterSheet(true)} className="h-11 rounded-[6px] border-0 bg-card px-2.5 font-mono text-[10px] uppercase text-ink hover:bg-card" aria-label="Filter">Filter</Button></>} />
 
       {ready && !user && (
         <div className="mt-2 flex shrink-0 items-center justify-between gap-2 border-y py-2">

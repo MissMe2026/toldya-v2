@@ -1,4 +1,6 @@
 # Discover phone update
+- [x] Add full-bleed sticky red main-tab banners with linked simulation strip and safe-area/status-bar color.
+- [x] Verify compact phone Discover and scrolling Calls/Board banners without changing behavior.
 - [x] Replace all wordmarks with Wallis's exact SVG and update the favicon.
 - [x] Verify phone headers and downloaded share PNG with the new logo.
 - [x] Apply the spec-sheet brand, shared Logo and neutral tabs without changing data or functionality.

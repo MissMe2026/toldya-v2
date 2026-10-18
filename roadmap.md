@@ -1,5 +1,5 @@
 # Discover phone update
-- [ ] Add matching cool user aura avatars to Board and Profile; verify both ranking periods with a fresh demo at 375×812.
+- [x] Add matching cool user aura avatars to Board and Profile; verify both ranking periods with a fresh demo at 375×812.
 - [x] Add full-bleed sticky red main-tab banners with linked simulation strip and safe-area/status-bar color.
 - [x] Verify compact phone Discover and scrolling Calls/Board banners without changing behavior.
 - [x] Replace all wordmarks with Wallis's exact SVG and update the favicon.

@@ -88,10 +88,15 @@ function ProfilePage() {
           <p className="text-sm">Star up to 3 calls in <Link to="/calls" className="underline">My Calls</Link> to pin them here.</p>
         ) : (
           <ol>
-            {big.map((r, i) => (
+            {big.map((r) => (
               <li key={r.call.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-2 border-b py-3 text-ink">
-                <span className="min-w-0"><span className="meta mr-2">({i + 1})</span><span className="font-display font-extrabold">{r.artist.name}</span></span>
+                <span className="min-w-0"><span className="font-display font-extrabold">{r.artist.name}</span></span>
                 <span className="meta text-right text-[10px]">{fmt(r.call.listeners_at_call)} → {fmt(r.now)} · ×{fmtMult(r.mult).replace(/x$/, "")}</span>
+              </li>
+            ))}
+            {Array.from({ length: 3 - big.length }).map((_, i) => (
+              <li key={`empty-${i}`} className="border-b py-3">
+                <Link to="/calls" className="meta text-muted-foreground hover:text-ink">Empty slot · star a call in My Calls</Link>
               </li>
             ))}
           </ol>

@@ -57,7 +57,7 @@ function Calls() {
       <div className="mt-6 flex items-center justify-between border-b pb-2">
         <div className="flex gap-1">
           {(["date", "growth"] as const).map((s) => (
-            <Button variant="ghost" key={s} onClick={() => setSort(s)} aria-pressed={sort === s} className={`meta h-9 rounded-none px-2.5 py-1.5 ${sort === s ? "text-ink underline underline-offset-4" : "text-muted-foreground"}`}>By {s}</Button>
+            <Button variant="ghost" key={s} onClick={() => setSort(s)} aria-pressed={sort === s} className={`meta h-9 rounded-none px-2.5 py-1.5 font-mono text-[10px] ${sort === s ? "text-ink underline underline-offset-4" : "text-muted-foreground"}`}>By {s}</Button>
           ))}
         </div>
         <span className="meta text-muted-foreground">★ {bigCount}/3 big calls</span>

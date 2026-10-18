@@ -23,8 +23,7 @@ export function TabBar() {
             key={t.to}
             to={t.to}
             activeOptions={{ exact: true }}
-            className="flex items-center justify-center border-t-[3px] border-transparent px-2 font-sans text-xs font-medium text-muted-foreground focus-visible:outline-2 focus-visible:outline-ink"
-            activeProps={{ className: "border-ink text-ink" }}
+            className={`flex items-center justify-center border-t-[3px] px-2 font-sans text-xs font-medium focus-visible:outline-2 focus-visible:outline-ink ${pathname === t.to ? "border-ink text-ink" : "border-transparent text-muted-foreground"}`}
           >
             <span>{t.label}</span>
           </Link>

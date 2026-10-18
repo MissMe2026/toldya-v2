@@ -122,7 +122,7 @@ function Discover() {
         <Logo />
         <div className="flex items-center gap-2">
           <span className="meta text-muted-foreground">{calls} calls · {deck.length} left</span>
-          <Button variant="outline" onClick={() => setFilterSheet(true)} className="meta h-11 rounded-[6px] px-2.5" aria-label="Filter">Filter</Button>
+          <Button variant="outline" onClick={() => setFilterSheet(true)} className="h-11 rounded-[6px] px-2.5 font-mono text-[10px] uppercase" aria-label="Filter">Filter</Button>
         </div>
       </header>
 
@@ -175,7 +175,7 @@ function Discover() {
 
       {topCard && (
         <div className="mt-5 grid shrink-0 grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="h-[52px] rounded-[6px] border border-ink bg-card text-base font-medium shadow-none active:bg-muted">
+          <Button variant="outline" onClick={() => decide(topCard, "pass")} className="h-[52px] rounded-[6px] border border-ink bg-card text-base font-medium shadow-none hover:bg-card active:bg-muted">
             Pass ←
           </Button>
           <Button onClick={() => decide(topCard, "call")} className="h-[52px] rounded-[6px] bg-signal text-base font-medium text-primary-foreground shadow-none hover:bg-signal/90 active:bg-signal/90">

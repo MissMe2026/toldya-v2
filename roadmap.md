@@ -15,3 +15,5 @@
 - [x] Verify mobile layout, pinned stars, Fast-forward celebration and square PNG fonts/download.
 - [x] Finish Profile and Leaderboard spec-sheet styling without changing data, controls or auras.
 - [x] Verify phone overflow, tab clearance, badge states, Top 8 editing/reordering and ranking tabs.
+- [x] Finish Connected Apps, Auth, Onboarding, About and Discover filter spec-sheet styling without changing behavior.
+- [x] Verify every page and remaining sheets at 375×812, including connected-app permissions and onboarding selections.

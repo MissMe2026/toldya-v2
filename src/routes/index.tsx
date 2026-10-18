@@ -136,13 +136,13 @@ function Discover() {
       )}
 
       <Sheet open={filterSheet} onOpenChange={setFilterSheet}>
-        <SheetContent side="bottom" aria-describedby={undefined} className="mx-auto max-w-md rounded-t-[6px] border bg-card pb-[calc(24px_+_env(safe-area-inset-bottom))] shadow-none">
-          <SheetTitle className="display text-3xl">Filter.</SheetTitle>
-          <p className="meta mb-2 mt-6 text-muted-foreground">Genre</p>
+        <SheetContent side="bottom" aria-describedby={undefined} className="mx-auto max-h-[calc(100dvh_-_88px)] max-w-md overflow-y-auto rounded-t-[6px] border bg-card pb-[calc(88px_+_env(safe-area-inset-bottom))] shadow-none">
+          <SheetTitle className="display text-3xl text-ink">filter.</SheetTitle>
+          <p className="meta mb-2 mt-6 border-b pb-1.5 text-ink">Genre</p>
           <div className="-mx-6 flex gap-1.5 overflow-x-auto px-6 pb-2">
             {GENRES.map((g) => <Button variant="ghost" key={g} onClick={() => setGenre(g)} aria-pressed={genre === g} className={`h-11 shrink-0 rounded-[6px] border px-2.5 text-sm ${genre === g ? "border-ink bg-ink text-primary-foreground" : "bg-card"}`}>{g}</Button>)}
           </div>
-          <p className="meta mb-2 mt-4 text-muted-foreground">Listeners</p>
+          <p className="meta mb-2 mt-4 border-b pb-1.5 text-ink">Listeners</p>
           <div className="-mx-6 flex gap-1.5 overflow-x-auto px-6 pb-2">
             {TIERS.map((t) => <Button variant="ghost" key={t.k} onClick={() => setTier(t.k)} aria-pressed={tier === t.k} className={`h-11 shrink-0 rounded-[6px] border px-2.5 text-sm ${tier === t.k ? "bg-mint text-ink" : "bg-card text-muted-foreground"}`}>{t.label}</Button>)}
           </div>

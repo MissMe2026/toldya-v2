@@ -9,7 +9,7 @@ const COOL: Record<string, string> = {
 export function auraStyle(mix: AuraMix, listeners: number, famous = false) {
   return {
     colors: famous ? ["var(--ink)", "var(--signal)", "var(--mint)"] :
-      [COOL[mix.core] ?? COOL.ink, COOL[mix.mid] ?? COOL.teal, COOL[mix.halo] ?? COOL.mint],
+      [COOL[mix.core] ?? COOL["ink"], COOL[mix.mid] ?? COOL["teal"], COOL[mix.halo] ?? COOL["mint"]],
     mosaic: !famous && listeners < 1000,
     blur: famous ? 0 : listeners < 1000 ? 0 : listeners < 10000 ? 14 : listeners < 50000 ? 7 : 0.8,
     shape: mix.shape === "capsule" || mix.shape === "silhouette" ? mix.shape : "orb",

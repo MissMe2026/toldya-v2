@@ -96,7 +96,7 @@ function Calls() {
               <div className="px-3 pb-5 pt-3"><ReceiptDimension then={r.call.listeners_at_call} now={r.now} mult={r.mult} tone={st === "Rising" || ty ? "rising" : "neutral"} /></div>
               <div className="grid grid-cols-4 gap-2 border-t border-ink/18 px-3 py-3">
                 {[["1 Genre", r.artist.genre], ["2 City", r.artist.city], ["3 Called at", r.call.listeners_at_call.toLocaleString()]].map(([label, value]) => <div key={label} className="min-w-0"><div className="meta text-[10px] font-bold">{label}</div><div className="mt-1 break-words text-[10px] leading-tight">{value}</div></div>)}
-                <div className="min-w-0"><div className="meta text-[10px] font-bold">4 Status</div><div className="meta mt-1 flex items-center gap-1 text-[10px] leading-tight">{!ty && st === "Rising" && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-mint" />}{ty ? "TOLD YA ©" : st}</div>{ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="meta mt-1 inline-block text-[10px] text-ink underline">Share →</Link>}</div>
+                <div className="min-w-0"><div className="meta text-[10px] font-bold">4 Status</div><div className="meta mt-1 flex items-center gap-1 text-[9px] leading-tight">{!ty && st === "Rising" && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-mint" />}{ty ? "TOLD YA ©" : st}</div>{ty && <Link to="/r/$callId" params={{ callId: r.call.id }} className="meta mt-1 inline-block text-[9px] text-ink underline">Share →</Link>}</div>
               </div>
             </li>
           );

@@ -54,7 +54,7 @@ export type Database = {
           aura_mix: Json
           bio: string
           callers_count: number
-          city: string
+          city: string | null
           created_at: string
           deezer_fans: number | null
           deezer_id: number | null
@@ -74,7 +74,7 @@ export type Database = {
           aura_mix: Json
           bio: string
           callers_count?: number
-          city: string
+          city?: string | null
           created_at?: string
           deezer_fans?: number | null
           deezer_id?: number | null
@@ -94,7 +94,7 @@ export type Database = {
           aura_mix?: Json
           bio?: string
           callers_count?: number
-          city?: string
+          city?: string | null
           created_at?: string
           deezer_fans?: number | null
           deezer_id?: number | null

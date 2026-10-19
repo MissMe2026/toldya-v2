@@ -8,6 +8,13 @@
       "when": 1792390255257,
       "tag": "0000_real_artist_data_layer",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792390510636,
+      "tag": "0001_allow_unknown_real_artist_city",
+      "breakpoints": true
     }
   ]
 }

@@ -28,7 +28,9 @@ export const Route=createFileRoute('/api/public/jobs/artists')({
         const resumed=await supabaseAdmin.from('import_runs').update({status:'running',retry_after:null}).eq('status','paused');
         if(resumed.error) return Response.json({error:'Could not resume job'},{status:500});
       }
-      const run=await startArtistRun(supabaseAdmin,parsed.data.action==='start'?'import':'refresh');
+      const previous=await supabaseAdmin.from('import_runs').select('id').eq('kind','import').eq('status','completed').limit(1);
+      if(previous.error) return Response.json({error:'Could not read import history'},{status:500});
+      const run=await startArtistRun(supabaseAdmin,parsed.data.action==='start' || !previous.data?.length ? 'import':'refresh');
       if(run.status==='paused') return Response.json({runId:run.id,status:'paused'},{status:409});
       runId=run.id; remaining=20000;
     }

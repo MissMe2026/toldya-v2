@@ -8,20 +8,23 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export const listOf = <T>(value: T | T[] | undefined): T[] => value === undefined ? [] : Array.isArray(value) ? value : [value];
 const ArtistInfo = z.object({ name: z.string().min(1).max(300), url: z.string(), mbid: z.string().optional(), stats: z.object({ listeners: z.coerce.number().int().min(0).max(2147483647), playcount: z.coerce.number().int().min(0).max(Number.MAX_SAFE_INTEGER) }), tags: z.object({ tag: z.union([z.array(z.object({ name: z.string() })),z.object({ name: z.string() })]).optional() }).optional() });
 
-export function musicApi(key: string) {
+export function musicApi(key: string, deadline = Date.now() + 18_000) {
   let lastRequest = 0;
   async function json(url: URL, lastfm: boolean): Promise<Record<string, any>> {
     for (let attempt = 0; attempt < 3; attempt++) {
+      if (Date.now() > deadline - 500) throw new MusicApiError('chunk_budget_exhausted', true);
       if (lastfm) { await sleep(Math.max(0, 260 - (Date.now()-lastRequest))); lastRequest = Date.now(); }
       let response: Response;
-      try { response = await fetch(url, { headers: { 'User-Agent': 'ToldYa/0.2' }, signal: AbortSignal.timeout(4000) }); }
+      try { response = await fetch(url, { headers: { 'User-Agent': 'ToldYa/0.2' }, signal: AbortSignal.timeout(Math.max(1, Math.min(4000, deadline-Date.now()))) }); }
       catch { throw new MusicApiError('provider_timeout', true); }
       if (response.status === 429 || response.status >= 500) {
         if (attempt === 2) throw new MusicApiError(`provider_${response.status}`, true);
         const retry = Number(response.headers.get('retry-after'));
         if (retry > 3) throw new MusicApiError('provider_429', true);
         await response.body?.cancel();
-        await sleep(Math.max(retry * 1000 || 0, 500 * 2 ** attempt)); continue;
+        const delay=Math.max(retry * 1000 || 0, 500 * 2 ** attempt);
+        if(Date.now()+delay>=deadline) throw new MusicApiError('chunk_budget_exhausted',true);
+        await sleep(delay); continue;
       }
       if (!response.ok) { await response.body?.cancel(); throw new MusicApiError(`provider_${response.status}`); }
       let data: Record<string, any>;
@@ -29,6 +32,7 @@ export function musicApi(key: string) {
       if (data['error']) {
         if (lastfm && [16,29].includes(Number(data['error']))) {
           if (attempt === 2) throw new MusicApiError('lastfm_rate_or_unavailable', true);
+          if(Date.now()+500 * 2 ** attempt>=deadline) throw new MusicApiError('chunk_budget_exhausted',true);
           await sleep(500 * 2 ** attempt); continue;
         }
         throw new MusicApiError(lastfm ? `lastfm_error_${Number(data['error'])}` : 'deezer_error');

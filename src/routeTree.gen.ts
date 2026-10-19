@@ -18,6 +18,7 @@ import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RCallIdRouteImport } from './routes/r.$callId'
+import { Route as ApiPublicJobsArtistsRouteImport } from './routes/api/public/jobs/artists'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const RCallIdRoute = RCallIdRouteImport.update({
   path: '/r/$callId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsArtistsRoute = ApiPublicJobsArtistsRouteImport.update({
+  id: '/api/public/jobs/artists',
+  path: '/api/public/jobs/artists',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/r/$callId': typeof RCallIdRoute
+  '/api/public/jobs/artists': typeof ApiPublicJobsArtistsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/r/$callId': typeof RCallIdRoute
+  '/api/public/jobs/artists': typeof ApiPublicJobsArtistsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/r/$callId': typeof RCallIdRoute
+  '/api/public/jobs/artists': typeof ApiPublicJobsArtistsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/r/$callId'
+    | '/api/public/jobs/artists'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/r/$callId'
+    | '/api/public/jobs/artists'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/r/$callId'
+    | '/api/public/jobs/artists'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   RCallIdRoute: typeof RCallIdRoute
+  ApiPublicJobsArtistsRoute: typeof ApiPublicJobsArtistsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RCallIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/artists': {
+      id: '/api/public/jobs/artists'
+      path: '/api/public/jobs/artists'
+      fullPath: '/api/public/jobs/artists'
+      preLoaderRoute: typeof ApiPublicJobsArtistsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   RCallIdRoute: RCallIdRoute,
+  ApiPublicJobsArtistsRoute: ApiPublicJobsArtistsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

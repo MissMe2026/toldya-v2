@@ -1,5 +1,27 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792390255257,
+      "tag": "0000_real_artist_data_layer",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792390510636,
+      "tag": "0001_allow_unknown_real_artist_city",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792390538751,
+      "tag": "0002_restrict_artist_job_grants",
+      "breakpoints": true
+    }
+  ]
 }

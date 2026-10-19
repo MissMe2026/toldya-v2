@@ -1,4 +1,9 @@
 # Discover phone update
+- [x] Step 1 real-data layer: additive artist metadata, daily snapshots, protected resumable Last.fm/Deezer import, daily refresh and tests; preserve every screen and demo.
+- [ ] Run real import and verify counts/history end-to-end — blocked on LASTFM_API_KEY.
+- [ ] Obtain LASTFM_API_KEY; Spotify secret updates skipped at Wallis's request.
+- [x] Finish remix migration reset without replaying copied schema.
+- [x] Restore the remix’s stale Cloud connection so existing screens can load.
 - [x] Limit Board to Top 10, add six deterministic genre Top 3 boards, and verify both periods on a fresh phone demo.
 - [x] Add matching cool user aura avatars to Board and Profile; verify both ranking periods with a fresh demo at 375×812.
 - [x] Add full-bleed sticky red main-tab banners with linked simulation strip and safe-area/status-bar color.

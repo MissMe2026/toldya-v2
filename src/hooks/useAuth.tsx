@@ -28,7 +28,7 @@ export function useArtists() {
   return useQuery({
     queryKey: ["artists"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("artists").select("*").order("created_at");
+      const { data, error } = await supabase.from("artists").select("*").eq("source", "demo").order("created_at");
       if (error) throw error;
       return data as unknown as Artist[];
     },

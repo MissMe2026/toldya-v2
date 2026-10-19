@@ -33,8 +33,11 @@ export async function runArtistChunk(db: DB, runId: string): Promise<{ pending: 
   const token=crypto.randomUUID();
   const { data: claimed,error: claimError }=await db.rpc('claim_artist_run',{ p_id:runId,p_token:token }); check(claimError);
   if (!claimed) return { pending:false };
-  const read=await db.from('import_runs').select('*').eq('id',runId).single(); check(read.error);
-  if (!read.data) throw new Error('artist_job_missing_run');
+  const read=await db.from('import_runs').select('*').eq('id',runId).single();
+  if(read.error || !read.data) {
+    await db.from('import_runs').update({lease_until:null,lease_token:null}).eq('id',runId).eq('lease_token',token);
+    throw new Error('artist_job_missing_run');
+  }
   const run: Run=read.data;
   const progress={ ...initial(), ...(run.progress as unknown as Partial<Progress>) };
   const errors = Array.isArray(run.errors) ? [...run.errors] : [];
@@ -44,7 +47,7 @@ export async function runArtistChunk(db: DB, runId: string): Promise<{ pending: 
     const result=await db.from('import_runs').update({status:'paused',lease_token:null,lease_until:null,errors:[...errors,{code:'missing_LASTFM_API_KEY'}].slice(-100)}).eq('id',runId).eq('lease_token',token); check(result.error);
     return { pending:false };
   }
-  const api=musicApi(key), deadline=Date.now()+12_000;
+  const deadline=Date.now()+18_000, api=musicApi(key,deadline);
   let processed=run.processed;
   try {
     // One artist enrichment per chunk leaves room for retries within waitUntil's lifetime.
@@ -121,10 +124,17 @@ export async function continueArtistJob(db: DB, runId: string, origin: string, r
   if(!credential) throw new Error('artist_job_scheduler_not_configured');
   await new Promise(resolve=>setTimeout(resolve,500));
   // Each bounded hop has its own lifetime. Never forward credentials to arbitrary Host headers.
-  const response=await fetch(`${origin}/api/public/jobs/artists`,{method:'POST',headers:{'content-type':'application/json',Authorization:`Bearer ${credential}`},body:JSON.stringify({action:'continue',runId,remaining:remaining-1}),signal:AbortSignal.timeout(5000)});
-  await response.body?.cancel();
-  if(!response.ok) {
-    const saved=await db.from('import_runs').update({status:'paused',errors:[{code:'continuation_failed'}]}).eq('id',runId).eq('status','running'); check(saved.error);
+  try {
+    const response=await fetch(`${origin}/api/public/jobs/artists`,{method:'POST',headers:{'content-type':'application/json',Authorization:`Bearer ${credential}`},body:JSON.stringify({action:'continue',runId,remaining:remaining-1}),signal:AbortSignal.timeout(5000)});
+    await response.body?.cancel();
+    if(!response.ok) throw new Error('continuation_failed');
+  } catch {
+    // Never replace errors or pause a lease now owned by another worker.
+    const current=await db.from('import_runs').select('errors').eq('id',runId).is('lease_token',null).eq('status','running').maybeSingle(); check(current.error);
+    if(current.data) {
+      const prior=Array.isArray(current.data.errors)?current.data.errors:[];
+      const saved=await db.from('import_runs').update({status:'paused',retry_after:new Date(Date.now()+60_000).toISOString(),errors:[...prior,{code:'continuation_failed'}].slice(-100)}).eq('id',runId).is('lease_token',null).eq('status','running'); check(saved.error);
+    }
   }
 }
 

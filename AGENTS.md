@@ -26,3 +26,7 @@
 - Genre rankings use a browser-safe pure helper to partition existing fictional board totals deterministically and score user receipts per genre and selected period; shared rows keep ranking layouts consistent.
 - Receipt cards and social images share ReceiptDimension for listener measurements; PNG export waits for loaded fonts and embeds them at a square social resolution so downloaded receipts match the on-screen typography.
 - BadgeStamp renders derived badge state as perforated stamps; Profile retains its existing Top 8 persistence and ordering handlers while using neutral editable tiles.
+- Real-artist ingestion uses server-only provider adapters, a leased import_runs cursor and idempotent snapshot RPCs; this isolates credentials and survives interrupted chunks.
+- Step-one artist reads and demo seeding filter source=demo; real records stay out of existing screens until the explicit data cutover.
+- Artist jobs use authenticated managed HTTP callbacks with bounded waitUntil continuations and an allowlisted origin; this avoids permanently polling an idle queue or leaking scheduler credentials.
+- Snapshot-triggered growth updates only source=lastfm artists; demo simulation and locked historical call counts remain independent.

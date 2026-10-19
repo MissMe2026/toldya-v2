@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      artist_snapshots: {
+        Row: {
+          artist_id: string
+          deezer_fans: number | null
+          id: string
+          listeners: number
+          playcount: number | null
+          taken_on: string
+        }
+        Insert: {
+          artist_id: string
+          deezer_fans?: number | null
+          id?: string
+          listeners: number
+          playcount?: number | null
+          taken_on: string
+        }
+        Update: {
+          artist_id?: string
+          deezer_fans?: number | null
+          id?: string
+          listeners?: number
+          playcount?: number | null
+          taken_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_snapshots_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artists: {
         Row: {
           aura_mix: Json
@@ -21,11 +56,19 @@ export type Database = {
           callers_count: number
           city: string
           created_at: string
+          deezer_fans: number | null
+          deezer_id: number | null
           genre: string
           growth_rate: number
           id: string
+          last_synced_at: string | null
+          lastfm_url: string | null
+          mbid: string | null
           monthly_listeners: number
           name: string
+          playcount: number | null
+          source: string
+          tags: string[] | null
         }
         Insert: {
           aura_mix: Json
@@ -33,11 +76,19 @@ export type Database = {
           callers_count?: number
           city: string
           created_at?: string
+          deezer_fans?: number | null
+          deezer_id?: number | null
           genre: string
           growth_rate: number
           id?: string
+          last_synced_at?: string | null
+          lastfm_url?: string | null
+          mbid?: string | null
           monthly_listeners: number
           name: string
+          playcount?: number | null
+          source?: string
+          tags?: string[] | null
         }
         Update: {
           aura_mix?: Json
@@ -45,11 +96,19 @@ export type Database = {
           callers_count?: number
           city?: string
           created_at?: string
+          deezer_fans?: number | null
+          deezer_id?: number | null
           genre?: string
           growth_rate?: number
           id?: string
+          last_synced_at?: string | null
+          lastfm_url?: string | null
+          mbid?: string | null
           monthly_listeners?: number
           name?: string
+          playcount?: number | null
+          source?: string
+          tags?: string[] | null
         }
         Relationships: []
       }
@@ -118,6 +177,51 @@ export type Database = {
           },
         ]
       }
+      import_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          errors: Json
+          id: string
+          kind: string
+          lease_token: string | null
+          lease_until: string | null
+          processed: number
+          progress: Json
+          retry_after: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          errors?: Json
+          id?: string
+          kind: string
+          lease_token?: string | null
+          lease_until?: string | null
+          processed?: number
+          progress?: Json
+          retry_after?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          errors?: Json
+          id?: string
+          kind?: string
+          lease_token?: string | null
+          lease_until?: string | null
+          processed?: number
+          progress?: Json
+          retry_after?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           connected: Json
@@ -151,12 +255,37 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_artist_run: {
+        Args: { p_id: string; p_token: string }
+        Returns: boolean
+      }
+      save_real_artist: {
+        Args: { p_artist: Json; p_day: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

@@ -47,8 +47,8 @@ export async function runArtistChunk(db: DB, runId: string): Promise<{ pending: 
   const api=musicApi(key), deadline=Date.now()+12_000;
   let processed=run.processed;
   try {
-    // At most two artist enrichments per chunk; all provider traffic is sequential.
-    for (let item=0; item<2 && Date.now()<deadline; item++) {
+    // One artist enrichment per chunk leaves room for retries within waitUntil's lifetime.
+    for (let item=0; item<1 && Date.now()<deadline; item++) {
       if (run.kind==='refresh') {
         const next=await db.from('artists').select('id,name,deezer_id,deezer_fans').eq('source','lastfm').gt('id',progress.cursor || '00000000-0000-0000-0000-000000000000').order('id').limit(1); check(next.error);
         const artist=next.data?.[0]; if (!artist) { status='completed'; break; }
@@ -128,8 +128,8 @@ export async function continueArtistJob(db: DB, runId: string, origin: string, r
   }
 }
 
-export function dispatchArtistJob(request: Request, work: Promise<unknown>) {
+export async function dispatchArtistJob(request: Request, work: Promise<unknown>): Promise<void> {
   const req=request as Request & {waitUntil?: (work:Promise<unknown>)=>void};
   if(req.waitUntil) req.waitUntil(work);
-  else return work; // Local development awaits work rather than dropping an untracked promise.
+  else await work; // Local development awaits work rather than dropping an untracked promise.
 }

@@ -26,12 +26,12 @@ export function musicApi(key: string) {
       if (!response.ok) { await response.body?.cancel(); throw new MusicApiError(`provider_${response.status}`); }
       let data: Record<string, any>;
       try { data = await response.json(); } catch { throw new MusicApiError('invalid_provider_response', true); }
-      if (data.error) {
-        if (lastfm && [16,29].includes(Number(data.error))) {
+      if (data['error']) {
+        if (lastfm && [16,29].includes(Number(data['error']))) {
           if (attempt === 2) throw new MusicApiError('lastfm_rate_or_unavailable', true);
           await sleep(500 * 2 ** attempt); continue;
         }
-        throw new MusicApiError(lastfm ? `lastfm_error_${Number(data.error)}` : 'deezer_error');
+        throw new MusicApiError(lastfm ? `lastfm_error_${Number(data['error'])}` : 'deezer_error');
       }
       return data;
     }
@@ -45,29 +45,29 @@ export function musicApi(key: string) {
   return {
     async candidates(tag: string, page: number) {
       const data = await lastfm('tag.getTopArtists', { tag, page: String(page), limit: '50' });
-      return listOf<{name:string}>(data.topartists?.artist).map(a => a.name).filter(n => typeof n === 'string');
+      return listOf<{name:string}>(data['topartists']?.artist).map(a => a.name).filter(n => typeof n === 'string');
     },
     async similar(artist: string) {
       const data = await lastfm('artist.getSimilar', { artist, limit: '50', autocorrect: '1' });
-      return listOf<{name:string}>(data.similarartists?.artist).map(a => a.name).filter(n => typeof n === 'string');
+      return listOf<{name:string}>(data['similarartists']?.artist).map(a => a.name).filter(n => typeof n === 'string');
     },
     async info(artist: string) {
       const data = await lastfm('artist.getInfo', { artist, autocorrect: '1' });
-      const a = ArtistInfo.parse(data.artist);
+      const a = ArtistInfo.parse(data['artist']);
       return { name: a.name, listeners: a.stats.listeners, playcount: a.stats.playcount, url: a.url, mbid: a.mbid || null, tags: listOf(a.tags?.tag).map(t=>t.name).slice(0,10) };
     },
     async deezer(name: string, id?: number | null) {
       if (id) {
         const data = await json(new URL(`https://api.deezer.com/artist/${id}`),false);
-        return nameKey(String(data.name)) === nameKey(name) && Number.isInteger(data.nb_fan) ? { id, fans: Number(data.nb_fan) } : null;
+        return nameKey(String(data['name'])) === nameKey(name) && Number.isInteger(data['nb_fan']) ? { id, fans: Number(data['nb_fan']) } : null;
       }
       const url = new URL('https://api.deezer.com/search/artist'); url.searchParams.set('q',name); url.searchParams.set('limit','25');
       const data = await json(url,false);
-      const matches = listOf<{id:number;name:string}>(data.data).filter(a=>nameKey(a.name) === nameKey(name));
+      const matches = listOf<{id:number;name:string}>(data['data']).filter(a=>nameKey(a.name) === nameKey(name));
       if (matches.length !== 1) return null;
       const match = matches[0]; if (!match) return null;
       const detail = await json(new URL(`https://api.deezer.com/artist/${match.id}`),false);
-      return nameKey(String(detail.name)) === nameKey(name) && Number.isInteger(detail.nb_fan) ? { id: match.id, fans: Number(detail.nb_fan) } : null;
+      return nameKey(String(detail['name'])) === nameKey(name) && Number.isInteger(detail['nb_fan']) ? { id: match.id, fans: Number(detail['nb_fan']) } : null;
     },
   };
 }

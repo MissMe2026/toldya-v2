@@ -28,7 +28,7 @@ export const prepareDemo = createServerFn({ method: "POST" }).handler(async () =
     ] as never,
   });
   if (profileError) throw new Error("Could not prepare demo profile");
-  const { data: artists, error: artistError } = await supabaseAdmin.from("artists").select("id,name,monthly_listeners,growth_rate");
+  const { data: artists, error: artistError } = await supabaseAdmin.from("artists").select("id,name,monthly_listeners,growth_rate").eq("source", "demo");
   if (artistError || !artists) throw new Error("Could not load demo artists");
   const now = Date.now();
   const rows = DEMO_CALLS.flatMap((c) => {

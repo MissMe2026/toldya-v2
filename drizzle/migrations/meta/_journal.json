@@ -15,6 +15,13 @@
       "when": 1792390510636,
       "tag": "0001_allow_unknown_real_artist_city",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792390538751,
+      "tag": "0002_restrict_artist_job_grants",
+      "breakpoints": true
     }
   ]
 }
